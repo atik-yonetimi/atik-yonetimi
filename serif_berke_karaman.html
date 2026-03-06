@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>AI Brifing — Şerif Berke Karaman (Flutter & UX/UI)</title>
+  <style>
+    :root{--page:#fff;--text:#111827;--muted:#4b5563;--border:#e5e7eb;--soft:#f9fafb;--accent:#2563eb;--accentSoft:#eff6ff;}
+    *{box-sizing:border-box}
+    body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;line-height:1.65;background:var(--page);color:var(--text);padding:22px 14px;}
+    .wrap{max-width:980px;margin:0 auto}
+    header,section{border:1px solid var(--border);border-radius:12px;background:#fff;padding:14px 14px 12px 14px;margin-top:12px;}
+    header{background:var(--soft)}
+    h1{margin:0 0 6px 0;font-size:20px}
+    h2{margin:0 0 10px 0;font-size:16px}
+    h3{margin:14px 0 8px 0;font-size:14px}
+    p{margin:0 0 10px 0}
+    .muted{color:var(--muted)}
+    .meta{display:flex;flex-wrap:wrap;gap:8px 14px;margin-top:10px;padding-top:10px;border-top:1px dashed var(--border);color:var(--muted);font-size:13px;}
+    .meta b{color:var(--text);font-weight:900}
+    .note{margin-top:10px;padding:10px 12px;border:1px solid var(--border);border-left:4px solid var(--accent);border-radius:12px;background:var(--accentSoft);color:var(--muted);font-size:12.5px;}
+    .note b{color:var(--text)}
+    ul{margin:8px 0 0 18px;padding:0}
+    li{margin:4px 0}
+    table{width:100%;border-collapse:collapse;margin-top:10px;font-size:13px}
+    th,td{border:1px solid var(--border);padding:10px;vertical-align:top}
+    th{background:var(--soft);text-align:left;font-weight:900}
+    pre{margin:10px 0 0 0;padding:10px 12px;border:1px solid var(--border);border-radius:12px;background:#fff;overflow:auto;font-size:12.5px;line-height:1.55}
+    .kbd{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;font-size:12px;padding:.15rem .4rem;border:1px solid var(--border);border-bottom-width:2px;border-radius:8px;background:#fff;white-space:nowrap;}
+    @media print{body{padding:0}.wrap{max-width:100%;margin:0}@page{size:A4;margin:12mm}}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <h1>AI Çalışma Brifingi — Şerif Berke Karaman</h1>
+      <p class="muted"><b>Rol:</b> Flutter Mobil Geliştirici + UX/UI Tasarımcısı</p>
+      <div class="meta">
+        <div><b>Proje:</b> Akıllı Şehir Çoklu Atık Türü Yönetimi ve Rota Optimizasyonu</div>
+        <div><b>Odak:</b> Sürücü deneyimi (az tıklama, net akış)</div>
+        <div><b>Yazdırma:</b> Ctrl+P</div>
+      </div>
+    </header>
+
+    <section>
+      <h2>1) Proje özeti (mobilin bilmesi gereken net kurallar)</h2>
+      <ul>
+        <li>Atık türleri: Cam, Plastik, Kağıt, İkinci El Eşya, Metal.</li>
+        <li>Her türün aracı ayrı; sürücü sadece kendi aracının rotasını görür.</li>
+        <li>Eşik (backend tarafı): doluluk ≥ %60 konteynerlar rotaya girer.</li>
+        <li>Durak durumları: pending / arrived / done / skipped.</li>
+        <li>Done = toplama kaydı var. Skipped = sebep zorunlu.</li>
+      </ul>
+      <div class="note"><b>Lider notu:</b> Sürücü uygulaması “hız” ister. 2–3 tıklamada kayıt atılmalı. Büyük buton, net metin.</div>
+    </section>
+
+    <section>
+      <h2>2) Senin teslimlerin (Şerif) — UI/UX</h2>
+      <table>
+        <thead><tr><th>Ekran</th><th>Ne olacak?</th><th>Done</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><b>Giriş</b></td>
+            <td>Plaka ile giriş (MVP), başarılı olunca ana ekrana geçiş.</td>
+            <td>Token saklanıyor, yeniden açınca login gerekmiyor (opsiyon).</td>
+          </tr>
+          <tr>
+            <td><b>Ana / Özet</b></td>
+            <td>Aktif rota var mı? Durak sayısı, tür, “rota yok” mesajı.</td>
+            <td>Rota yoksa kullanıcı boş ekranda kalmıyor.</td>
+          </tr>
+          <tr>
+            <td><b>Harita + Durak Listesi</b></td>
+            <td>Marker’lar + stop sırası listesi + “navigasyona aç” butonu.</td>
+            <td>Liste sırası backend sequence ile birebir aynı.</td>
+          </tr>
+          <tr>
+            <td><b>Durak Detay</b></td>
+            <td>Adres/tür/durum + arrived/done/skipped aksiyonları.</td>
+            <td>Done/Skip aksiyonları en görünür yerde.</td>
+          </tr>
+          <tr>
+            <td><b>Toplama Kaydı</b></td>
+            <td>Miktar (kg) + not (opsiyon). Skipped ise sebep seçimi zorunlu.</td>
+            <td>Backend’e collection POST gidiyor; stop done oluyor.</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section>
+      <h2>3) UX kuralları (sıfır eğitimli sürücü gibi düşün)</h2>
+      <ul>
+        <li>Her ekranda <b>1 ana aksiyon</b> (primary button) olsun.</li>
+        <li>“Rota yok” durumunda açıklayıcı mesaj: “Şu an görev yok. Sonra tekrar deneyin.”</li>
+        <li>Hata mesajı kısa: “Bağlantı yok” / “Sunucuya ulaşılamadı”.</li>
+        <li>Durak tamamlanınca kullanıcıya net geri bildirim (done etiketi).</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>4) AI’ye kopyala-yapıştır “komut” (Şerif için)</h2>
+      <pre>
+Sen benim Flutter (UI/UX) asistanımsın. Bu mesajı “tek kaynak” kabul et ve projeyi buradan öğren.
+
+PROJE ADI:
+Akıllı Şehir Çoklu Atık Türü Yönetimi ve Rota Optimizasyonu
+
+SİSTEM ÖZETİ (mobil açısından):
+Backend her atık türü için ayrı aracın durak sırasını (rota) üretir. Sürücü Flutter uygulamada sadece kendi aracının aktif rotasını görür. Haritada duraklar işaretlenir. Sürücü her durakta “done” (toplandı) veya “skipped” (atlanmış) seçer. Done’da miktar(kg) zorunlu, skipped’de sebep zorunlu.
+
+KESİN KURALLAR:
+1) Türler: Cam, Plastik, Kağıt, İkinci El Eşya, Metal.
+2) Her türün aracı ayrı; sürücü sadece kendi aracının rotasını görür.
+3) Durak durumları: pending / arrived / done / skipped.
+4) Done = collection kaydı var (miktar kg zorunlu).
+5) Skipped = sebep zorunlu (erişilemedi / dolu değil / arızalı / diğer).
+6) “Rota” = durak sırası (sequence). Navigasyon çizgisi opsiyonel.
+
+BENİM ROLÜM:
+Şerif Berke Karaman — Flutter Mobil Geliştirici + UX/UI Tasarımcısı.
+
+BENİM SORUMLULUKLARIM (UI/UX):
+A) Ekran akışı tasarımı: Giriş → Ana/Özet → Harita+Duraklar → Durak Detay → Kayıt
+B) Harita ve durak listesi UX’i (sıra çok net olmalı)
+C) “Boş durumlar” ve “hata durumları” metinleri (kısa, anlaşılır)
+D) Sürücü için minimum tıklama (2–3 adımda done/skipped)
+
+DATA BEKLENTİSİ (backend’den gelen):
+- active route: route_id, waste_type, vehicle_plate
+- stops: sequence_no, container_id, lat, lng, address(optional), status(pending/arrived/done/skipped)
+
+AI’DEN İSTEDİĞİM (NET ÇIKTI):
+1) Ekran listesi + her ekranın amacı:
+   - Login
+   - Home (aktif rota özeti / rota yok)
+   - Map+Stops (harita + sıralı liste)
+   - Stop Detail (tek durağın aksiyonları)
+   - Collection form (done/skipped)
+2) Her ekran için:
+   - Gösterilecek alanlar
+   - 1 ana buton + 1 ikincil buton (maksimum)
+   - Boş/hata durumları (Türkçe metin öner)
+3) Harita UX önerileri:
+   - Marker üzerinde sıra numarası gösterme
+   - “Sıradaki durak” vurgusu
+   - Done/Skipped olanları farklı renk/ikonla gösterme
+4) UI bileşenleri (minimum set):
+   - PrimaryButton, SecondaryButton
+   - StopCard, StatusPill
+   - BottomSheet/Modal (Durak detay)
+   - ErrorBanner/Toast
+5) Mini tasarım sistemi:
+   - Tipografi (başlık/gövde)
+   - Renkler (success/warn/error)
+   - Boş ekran illüstrasyonu şart değil (metin yeter)
+
+ÇIKTI FORMATIN:
+- Çok uzun teori yazma
+- Her ekran için 5–8 madde ile “ne var ne yok” yaz
+- En sonda: “Sürücü için en kritik 10 UX hatası” listesi yaz (kaçınalım)
+      </pre>
+      <div class="note"><b>Lider notu:</b> AI’den gelen öneriyi “en sade” haliyle uygula. Süslü tasarım değil, anlaşılır akış istiyoruz.</div>
+    </section>
+  </div>
+</body>
+</html>
+

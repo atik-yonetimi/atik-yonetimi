@@ -1,0 +1,184 @@
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>AI Brifing — Elif Onat (Mimari & Routing/Backend)</title>
+  <style>
+    :root{--page:#fff;--text:#111827;--muted:#4b5563;--border:#e5e7eb;--soft:#f9fafb;--accent:#2563eb;--accentSoft:#eff6ff;}
+    *{box-sizing:border-box}
+    body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;line-height:1.65;background:var(--page);color:var(--text);padding:22px 14px;}
+    .wrap{max-width:980px;margin:0 auto}
+    header,section{border:1px solid var(--border);border-radius:12px;background:#fff;padding:14px 14px 12px 14px;margin-top:12px;}
+    header{background:var(--soft)}
+    h1{margin:0 0 6px 0;font-size:20px}
+    h2{margin:0 0 10px 0;font-size:16px}
+    h3{margin:14px 0 8px 0;font-size:14px}
+    p{margin:0 0 10px 0}
+    .muted{color:var(--muted)}
+    .meta{display:flex;flex-wrap:wrap;gap:8px 14px;margin-top:10px;padding-top:10px;border-top:1px dashed var(--border);color:var(--muted);font-size:13px;}
+    .meta b{color:var(--text);font-weight:900}
+    .note{margin-top:10px;padding:10px 12px;border:1px solid var(--border);border-left:4px solid var(--accent);border-radius:12px;background:var(--accentSoft);color:var(--muted);font-size:12.5px;}
+    .note b{color:var(--text)}
+    ul{margin:8px 0 0 18px;padding:0}
+    li{margin:4px 0}
+    table{width:100%;border-collapse:collapse;margin-top:10px;font-size:13px}
+    th,td{border:1px solid var(--border);padding:10px;vertical-align:top}
+    th{background:var(--soft);text-align:left;font-weight:900}
+    pre{margin:10px 0 0 0;padding:10px 12px;border:1px solid var(--border);border-radius:12px;background:#fff;overflow:auto;font-size:12.5px;line-height:1.55}
+    .kbd{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;font-size:12px;padding:.15rem .4rem;border:1px solid var(--border);border-bottom-width:2px;border-radius:8px;background:#fff;white-space:nowrap;}
+    @media print{body{padding:0}.wrap{max-width:100%;margin:0}@page{size:A4;margin:12mm}}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <h1>AI Çalışma Brifingi — Elif Onat</h1>
+      <p class="muted"><b>Rol:</b> Yazılım Mimarı + Backend Geliştirici (Routing/Yetkilendirme)</p>
+      <div class="meta">
+        <div><b>Proje:</b> Akıllı Şehir Çoklu Atık Türü Yönetimi ve Rota Optimizasyonu</div>
+        <div><b>Odak:</b> OpenAPI sözleşmesi + rota üretimi + yetki</div>
+        <div><b>Yazdırma:</b> Ctrl+P</div>
+      </div>
+    </header>
+
+    <section>
+      <h2>1) Proje kuralları (mimariyi belirleyen maddeler)</h2>
+      <ul>
+        <li>Atık türleri: Cam, Plastik, Kağıt, İkinci El Eşya, Metal.</li>
+        <li>Her tür için ayrı araç var; araç sadece kendi türünü toplar.</li>
+        <li>Garaj başlangıç/bitiş: rota planı garajdan başlar ve garaja döner (MVP).</li>
+        <li>Eşik: doluluk ≥ %60 konteynerlar filtrelenir.</li>
+        <li>Rota = durak sırası. Navigasyon çizgisi/route polyline opsiyonel.</li>
+        <li>Yetki: sürücü sadece kendi aracının rotasını görebilir.</li>
+      </ul>
+      <div class="note"><b>Lider notu:</b> Senin en kritik çıktın “sözleşme”. Mobil ekip endpoint/alan adlarını senden alacak; isimler stabil olmalı.</div>
+    </section>
+
+    <section>
+      <h2>2) Senin teslimlerin (Elif) — net liste</h2>
+      <table>
+        <thead><tr><th>İş</th><th>Ne üretilecek?</th><th>Done (bitti sayma)</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><b>OpenAPI v1</b></td>
+            <td>
+              Minimum endpoint sözleşmesi:
+              <ul>
+                <li>Auth: login (plaka) + me</li>
+                <li>Routes: generate (opsiyon/admin), active (driver)</li>
+                <li>Stops: status update (arrived/done/skipped)</li>
+                <li>Collections: create (miktar kg + sebep)</li>
+                <li>Telemetry ingest payload şeması (Deniz ile uyumlu)</li>
+              </ul>
+            </td>
+            <td>Swagger çıktısı “tek kaynak”. Mobil mock yapabilir, backend implemente edebilir.</td>
+          </tr>
+          <tr>
+            <td><b>Rota üretimi v1</b></td>
+            <td>
+              Tür başına tek araç için:
+              <ul>
+                <li>Latest state’den konteyner seç (≥%60)</li>
+                <li>Garaj + konteyner noktaları</li>
+                <li>Durak sırası üret (TSP mantığı)</li>
+                <li>Stop sequence döndür</li>
+              </ul>
+            </td>
+            <td>Her tür için stop sırası üretiliyor; DB’ye yazılıp mobilde görülebiliyor.</td>
+          </tr>
+          <tr>
+            <td><b>Rota stabilitesi (MVP basit)</b></td>
+            <td>Rota çok sık değişmesin: basit politika (ör. sadece manuel/cron üretim).</td>
+            <td>Sürücü rotası gün içinde sürekli oynamıyor.</td>
+          </tr>
+          <tr>
+            <td><b>Yetkilendirme</b></td>
+            <td>Driver token/kimlik ile sadece kendi route_plan’ını görür.</td>
+            <td>Yanlış sürücü yanlış rotayı göremiyor (kritik).</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section>
+      <h2>3) Rota tasarımında net ayrım (AI’nin de anlaması için)</h2>
+      <ul>
+        <li><b>Input</b>: Garaj noktası + seçilen konteynerlar (lat/lng) + tür.</li>
+        <li><b>Output</b>: Stop listesi + <b>sequence</b>.</li>
+        <li><b>NOT</b>: “Yol çizgisi” (polyline) yoksa da MVP kabul; mobil dış navigasyon açabilir.</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>4) AI’ye kopyala-yapıştır “komut” (Elif için)</h2>
+      <pre>
+Sen benim proje asistanımsın. Bu mesajı “tek kaynak” kabul et ve projeyi buradan öğren.
+
+PROJE ADI:
+Akıllı Şehir Çoklu Atık Türü Yönetimi ve Rota Optimizasyonu (IoT Simülasyonu)
+
+SİSTEM ÖZETİ:
+Simülasyon konteyner doluluk/konum/tür verisi gönderir. Backend doluluk eşiğini aşan konteynerları seçer. Her atık türünün aracı ayrıdır ve rota garajdan başlar, garaja döner. Mobil sürücü uygulaması sadece kendi aracının rotasını görür ve duraklarda done/skipped ile kayıt açar.
+
+KESİN KURALLAR (DEĞİŞMEZ):
+1) Türler: Cam, Plastik, Kağıt, İkinci El Eşya, Metal.
+2) Her tür için ayrı araç vardır; araç sadece kendi türünü toplar.
+3) Garaj: rota başlangıç + bitiş (MVP).
+4) Eşik: doluluk ≥ %60 konteynerlar adaydır (MVP).
+5) Rota = durak sırası (sequence). Yol çizgisi/polyline opsiyonel.
+6) Durak durumları: pending / arrived / done / skipped.
+   - done: miktar(kg) zorunlu collection kaydı
+   - skipped: sebep zorunlu
+7) Yetki: sürücü sadece kendi aracının (vehicle) aktif rotasını görebilir.
+
+BENİM ROLÜM:
+Elif Onat — Yazılım Mimarı + Backend (OpenAPI sözleşmesi + routing + auth/authorization).
+
+BENİM SORUMLULUKLARIM:
+A) OpenAPI v1 sözleşmesi (ekip için “tek kaynak”):
+   - Endpoint isimleri ve alan adları stabil olacak
+   - Mobil ekip bu sözleşmeye göre ilerleyecek
+B) Routing (MVP):
+   - Input: garaj + seçilen konteynerlar (lat/lng) + waste_type
+   - Output: stop listesi + sequence_no
+   - Her waste_type için ayrı route_plan üretimi (tek araç varsayımıyla başla)
+C) Authorization:
+   - Driver token’ı ile sadece “kendi vehicle_id” rotasına erişim
+   - Hatalar: 401/403/404 net ve tutarlı
+D) Rota güncelleme politikası (MVP basit):
+   - Rota üretimi: manuel/cron/tek buton (sık değişmesin)
+   - Sürücü uygulamasında “rota değişti” mesajı için versiyon mantığı (opsiyonel)
+
+AI’DEN İSTEDİĞİM (NET ÇIKTI):
+1) OpenAPI v1 taslağı (liste + alanlar):
+   - auth/login (plaka) → token
+   - me
+   - routes/active (driver)
+   - routes/generate (admin veya cron tetik)
+   - stops/{id}/status (arrived/done/skipped)
+   - collections (create)
+   - telemetry ingest şeması (Deniz/Mehmet ile uyumlu)
+2) Request/response örnekleri:
+   - routes/active response: route_plan + stops (sequence, container info)
+   - collections create request/response
+3) Stop state machine kuralları:
+   - hangi geçişler serbest, hangileri değil?
+   - done olunca collection zorunlu kuralı
+4) Routing algoritma akışı (MVP):
+   - latest state → filter (≥60 + waste_type) → build points → solve order → persist route_plan/stops
+   - Eğer seçilen konteyner yoksa: boş rota davranışı
+5) Authorization tasarımı:
+   - driver ↔ vehicle ↔ route_plan bağları
+   - 403/404 stratejisi (güvenlik + UX)
+
+ÇIKTI FORMATIN:
+- Önce “Sözleşme” (endpoint listesi), sonra “Örnek JSON”, sonra “Kurallar”
+- Alan adlarını snake_case mi camelCase mi seçeceksen tutarlı ol (mobil ile aynı)
+- En sonda: “MVP’de kesin yapmayacağımız 10 şey” listesi yaz (scope control)
+      </pre>
+    </section>
+  </div>
+</body>
+</html>
+

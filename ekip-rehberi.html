@@ -1,0 +1,702 @@
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Ekip Rehberi — Akıllı Şehir Çoklu Atık Türü Yönetimi ve Rota Optimizasyonu</title>
+  <style>
+    :root{
+      --page:#ffffff;
+      --text:#111827;
+      --muted:#4b5563;
+      --border:#e5e7eb;
+      --soft:#f9fafb;
+      --accent:#2563eb;
+      --accentSoft:#eff6ff;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, "Noto Sans", "Liberation Sans", sans-serif;
+      line-height:1.65;
+      background: var(--page);
+      color: var(--text);
+      padding: 22px 14px;
+    }
+    .wrap{max-width:920px; margin:0 auto}
+    header{
+      border:1px solid var(--border);
+      background: var(--soft);
+      border-radius:12px;
+      padding:16px 16px 12px 16px;
+    }
+    h1{margin:0 0 8px 0; font-size:20px}
+    h2{margin:0 0 10px 0; font-size:16px}
+    h3{margin:14px 0 8px 0; font-size:14px}
+    p{margin:0 0 10px 0}
+    .sub{margin:0; color:var(--muted); font-size:14px}
+    .meta{
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px 14px;
+      margin-top:12px;
+      padding-top:12px;
+      border-top:1px dashed var(--border);
+      color:var(--muted);
+      font-size:13px;
+    }
+    .meta b{color:var(--text); font-weight:700}
+    .grid{display:grid; gap:12px; margin-top:12px}
+    /* Basitlik için tek kolon; büyük ekranda da ikiye bölmüyoruz. */
+    section{
+      border:1px solid var(--border);
+      background:#fff;
+      border-radius:12px;
+      padding:14px 14px 12px 14px;
+    }
+    .muted{color:var(--muted)}
+    ul{margin:8px 0 0 18px; padding:0}
+    li{margin:4px 0}
+    .pill{
+      display:inline-block;
+      padding:2px 10px;
+      border-radius:999px;
+      border:1px solid var(--border);
+      background: var(--soft);
+      color:var(--text);
+      font-size:12px;
+      margin-right:6px;
+      margin-bottom:6px;
+      white-space:nowrap;
+    }
+    .callout{
+      border:1px solid #bfdbfe;
+      border-left:4px solid var(--accent);
+      padding:10px 12px;
+      border-radius:10px;
+      background: var(--accentSoft);
+      margin:10px 0;
+    }
+    table{
+      width:100%;
+      border-collapse:collapse;
+      margin-top:10px;
+      font-size:13px;
+    }
+    th,td{
+      border:1px solid var(--border);
+      padding:10px 10px;
+      vertical-align:top;
+    }
+    th{
+      text-align:left;
+      background: var(--soft);
+      font-weight:700;
+    }
+    .tag{
+      display:inline-block;
+      border:1px solid var(--border);
+      padding:2px 8px;
+      border-radius:999px;
+      font-size:12px;
+      color:var(--muted);
+      background: var(--soft);
+      margin:2px 6px 2px 0;
+      white-space:nowrap;
+    }
+    .checklist{
+      list-style:none;
+      margin:10px 0 0 0;
+      padding:0;
+    }
+    .checklist li{
+      display:flex;
+      gap:10px;
+      align-items:flex-start;
+      border:1px solid var(--border);
+      border-radius:12px;
+      padding:10px 12px;
+      margin:8px 0;
+      background: #fff;
+    }
+    .box{
+      width:16px; height:16px;
+      border:2px solid #9ca3af;
+      border-radius:4px;
+      margin-top:2px;
+      flex:0 0 auto;
+    }
+    .small{font-size:12px; color:var(--muted)}
+    .mini{
+      color:var(--muted);
+      font-size:12px;
+      font-style:italic;
+      margin-left:6px;
+      white-space:normal;
+    }
+    .note{
+      margin-top:10px;
+      padding:10px 12px;
+      border:1px solid var(--border);
+      border-left:4px solid var(--accent);
+      border-radius:12px;
+      background: var(--soft);
+      color: var(--muted);
+      font-size:12.5px;
+    }
+    .note b{color:var(--text)}
+    .note ul{margin:6px 0 0 18px}
+    .kbd{
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      font-size:12px;
+      padding:.15rem .4rem;
+      border:1px solid var(--border);
+      border-bottom-width:2px;
+      border-radius:8px;
+      background: #fff;
+      color:var(--text);
+      white-space:nowrap;
+    }
+    footer{
+      margin-top:14px;
+      color:var(--muted);
+      font-size:12px;
+      text-align:center;
+    }
+    .printHint{margin-top:10px; color:var(--muted); font-size:12px}
+    .step{
+      border:1px solid var(--border);
+      background: #fff;
+      border-radius:12px;
+      padding:12px 12px 10px 12px;
+      margin:10px 0;
+    }
+    .stepTitle{
+      display:flex;
+      gap:10px;
+      align-items:flex-start;
+      margin:0 0 6px 0;
+    }
+    .stepNo{
+      width:24px; height:24px;
+      border-radius:8px;
+      background: var(--accent);
+      color:#fff;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-weight:800;
+      flex: 0 0 auto;
+      font-size:13px;
+      margin-top:1px;
+    }
+    .stepTitle b{font-weight:800}
+    @media print{
+      body{padding:0}
+      .wrap{max-width:100%; margin:0}
+      @page{size:A4; margin:12mm}
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <h1>Akıllı Şehir Çoklu Atık Türü Yönetimi ve Rota Optimizasyonu (IoT Simülasyonu)</h1>
+      <p class="sub">
+        Bu doküman, 5 kişilik ekibimizin proje kapsamını, rol-sorumlulukları ve adım adım çalışma şeklini aynı sayfada netleştirmek için hazırlanmıştır.
+      </p>
+      <div class="meta">
+        <div><b>Takım Lideri:</b> Mehmet Demir</div>
+        <div><b>Ekip:</b> 5 kişi</div>
+        <div><b>Çıktı:</b> Flutter Mobil + Backend/DB + Simülasyon</div>
+        <div><b>Yazdırma:</b> <span class="kbd">Ctrl</span> + <span class="kbd">P</span></div>
+      </div>
+      <div class="printHint">Not: Bu doküman “tek kaynak”tır. Herkes aynı tanımları, aynı durum akışlarını ve aynı teslim kriterlerini kullanır.</div>
+    </header>
+
+    <div class="grid cols2">
+      <section>
+        <h2>0) Kronolojik Plan (en basit haliyle “ne zaman ne yapacağız?”)</h2>
+        <p class="muted">
+          Ekipte herkes aynı sırayı takip edecek. Bir adımı bitirmeden (kabul kriteri geçmeden) sonraki adıma geçmiyoruz.
+        </p>
+
+        <div class="step">
+          <div class="stepTitle"><div class="stepNo">0</div><div><b>Hazırlık</b> — Proje tanımı kilitlenir</div></div>
+          <ul>
+            <li>5 atık türü kesin: <b>Cam, Plastik, Kağıt, İkinci El, Metal</b>. <span class="mini">Lider notu: Bunlar “sabit liste”; demo boyunca isimler değişmeyecek.</span></li>
+            <li>5 araç kesin: Her türün <b>kendi aracı</b> var, araçlar <b>garajdan çıkar</b> ve <b>garaja döner</b>. <span class="mini">Lider notu: Araç “karışık tür” toplamaz; rota üretimi buna göre yapılacak.</span></li>
+            <li>Ortak dil: durak durumları (pending/arrived/done/skipped) ve miktar birimi (MVP: kg). <span class="mini">Lider notu: Mobilde ne yazıyorsa backend’de de aynı kelime olacak.</span></li>
+          </ul>
+          <div class="small"><b>Sahip:</b> Mehmet (A) • Elif/Deniz (C) • Mobil ekip (I)</div>
+          <div class="note">
+            <b>Lider notu (ekipçe):</b> Bu adım “çok basit” gibi görünür ama en çok hata burada çıkar. Terimlerde anlaşmadan kod yazmaya başlamıyoruz.
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="stepTitle"><div class="stepNo">1</div><div><b>Simülasyon → Backend’e veri akışı</b></div></div>
+          <ul>
+            <li>Simülasyon telemetri üretir ve backend’e gönderir. <span class="mini">Lider notu: İlk sürümde “doğru veri” yeter; sonra anomali ekleriz.</span></li>
+            <li>Backend bu telemetrileri doğrular ve DB’ye kaydeder. <span class="mini">Lider notu: Hatalı veri gelirse 400 dönsün; sessizce yutmayalım.</span></li>
+            <li>DB’de her konteyner için “en son doluluk” hesaplanabilir. <span class="mini">Lider notu: Rota üretimi sadece “latest” üzerinden çalışacak.</span></li>
+          </ul>
+          <div class="small"><b>Sahip:</b> Mehmet (Sim) • Deniz (DB/ingest) • Elif (API sözleşmesi)</div>
+          <div class="note">
+            <b>Lider notu:</b>
+            <ul>
+              <li><b>Mehmet</b>: Telemetriyi batch gönder; aynı konteyner için ardışık verileri tutarlı üret.</li>
+              <li><b>Deniz</b>: “latest state” (son telemetri) mantığını erkenden hazırla; rota buraya bakacak.</li>
+              <li><b>Elif</b>: Telemetri payload alanlarını OpenAPI’de netleştir; mobil ekiple isimler birebir aynı olsun.</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="stepTitle"><div class="stepNo">2</div><div><b>Rota üretimi</b> — Tür başına araç</div></div>
+          <ul>
+            <li>Her tür için: doluluk ≥ <b>%60</b> olan konteynerlar seçilir. <span class="mini">Lider notu: Eşiği tek yerden tanımlayalım; 3 farklı yerde yazmayalım.</span></li>
+            <li>Seçilen noktalar için durak sırası (TSP mantığı) üretilir. <span class="mini">Lider notu: MVP’de tek araç/tek tür; önce “çalışsın”, sonra güzelleştiririz.</span></li>
+            <li>Rota DB’ye kaydedilir: <b>Route Plan</b> + <b>Stops</b>. <span class="mini">Lider notu: Stop’larda sıra numarası (sequence) şart; mobil ona göre listeleyecek.</span></li>
+          </ul>
+          <div class="small"><b>Sahip:</b> Elif (optimizasyon) • Deniz (persist/endpoint)</div>
+          <div class="note">
+            <b>Lider notu:</b> Rota “sıra” demektir. Yol çizimi (navigasyon) ayrı iş; bunu birbirine karıştırmayalım.
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="stepTitle"><div class="stepNo">3</div><div><b>Flutter Mobil</b> — sürücü ekranları</div></div>
+          <ul>
+            <li>Plaka ile giriş. <span class="mini">Lider notu: İlk sürümde pratik olsun; güvenliği sonra güçlendiririz.</span></li>
+            <li>Sürücü sadece <b>kendi aracının</b> aktif rotasını görür. <span class="mini">Lider notu: Yetki kontrolü backend’de de olmalı; sadece UI ile olmaz.</span></li>
+            <li>Haritada duraklar + “navigasyona aç”. <span class="mini">Lider notu: En kolay wins; sürücü için en kritik özellik bu.</span></li>
+            <li>Durak: arrived/done/skipped + toplama kaydı (miktar). <span class="mini">Lider notu: “skipped” için sebep zorunlu olsun; raporda çok işimize yarar.</span></li>
+          </ul>
+          <div class="small"><b>Sahip:</b> Şerif (UI/UX/harita) • Eren (data/offline/test)</div>
+          <div class="note">
+            <b>Lider notu:</b> Ekranları “az ama net” tutun. Sürücü 10 tıklama yapmayacak; 2–3 tıklamada iş bitecek.
+          </div>
+        </div>
+
+        <div class="callout">
+          <b>Başarı ölçütü (Mini‑MVP demo):</b> Sim veri üretir → Cam aracı için rota oluşur → sürücü mobilde görür → 1 durağı “done” yapar → kayıt DB’ye düşer.
+        </div>
+      </section>
+
+      <section>
+        <h2>1) Projenin amacı (güncellenmiş kapsam)</h2>
+        <p>
+          Şehirlerde atık toplama süreçlerinde yaşanan <b>verimsizlik</b>, <b>yakıt israfı</b> ve <b>zaman kaybını</b> azaltmak için; gerçek sensör yerine <b>IoT simülasyonu</b> ile konteyner doluluk/konum verisi üreten,
+          bu veriyi backend’de analiz edip <b>rota optimizasyonu</b> yapan ve sürücüye <b>tek mobil uygulama</b> üzerinden görev akışı sunan bir sistem geliştireceğiz.
+        </p>
+
+        <div class="callout">
+          <b>Yeni kritik kural:</b> Her atık türü için <b>ayrı konteyner</b> ve o türü toplayan <b>ayrı bir çöp aracı</b> vardır. Araçlar her gün <b>garajdan çıkar</b>, sadece kendi türünü toplar ve <b>garaja döner</b>.
+        </div>
+
+        <h3>Atık türleri ve araçlar</h3>
+        <p class="muted">Bu 5 tür MVP’de “kesin” kabul edilir; yeni tür eklemek sistemde parametrelidir.</p>
+        <div>
+          <span class="pill">Cam</span>
+          <span class="pill">Plastik</span>
+          <span class="pill">Kağıt</span>
+          <span class="pill">İkinci El Eşya</span>
+          <span class="pill">Metal</span>
+        </div>
+
+        <h3>Eşik ve seçme mantığı</h3>
+        <ul>
+          <li>Konteynerlar için “son doluluk” değerine bakılır.</li>
+          <li>MVP eşiği: <b>%60</b> ve üstü konteynerlar seçilir (ileride tür bazlı eşik eklenebilir).</li>
+          <li>Seçilen noktalar için her türün aracı kendi rotasını alır (Cam aracı sadece cam konteyner duraklarını görür).</li>
+        </ul>
+      </section>
+
+      <section>
+        <h2>2) Sistem bileşenleri (tek cümleyle)</h2>
+        <ul>
+          <li><b>Simülasyon</b>: Konteyner doluluk + konum + tür verisi üretir ve backend’e gönderir.</li>
+          <li><b>Backend/DB</b>: Veriyi kaydeder, eşik üstünü filtreler, rota üretir, araç/sürücüye atar, toplama kayıtlarını tutar.</li>
+          <li><b>Mobil (Flutter)</b>: Plaka ile giriş, rota/harita, durak akışı, toplama kaydı, offline kuyruğu.</li>
+        </ul>
+
+        <h3>“Rota” kavramının net tanımı</h3>
+        <ul>
+          <li><b>Optimizasyon sonucu</b>: Durakların en iyi <b>sırası</b> (TSP/VRP mantığı).</li>
+          <li><b>Navigasyon rotası</b>: Harita servisinin çizdiği gerçek yol (mobil uygulama dış navigasyonla açabilir).</li>
+        </ul>
+
+        <h3>Kayıt altına alma (zorunlu çıktı)</h3>
+        <ul>
+          <li>Hangi tür atık → hangi konteynerdan → ne zaman → hangi araç/sürücü ile toplandı.</li>
+          <li>Durak sonucu: <b>Toplandı</b> / <b>Atlandı</b> (atlandıysa sebep zorunlu).</li>
+          <li>Miktar birimi: MVP’de tek tip (örn. <b>kg</b>) seçilir ve tüm ekip bunu kullanır.</li>
+        </ul>
+      </section>
+    </div>
+
+    <section>
+      <h2>3) Roller, sorumluluklar ve teslim beklentileri</h2>
+      <p class="muted">Her rolün “ne yapacağı” ve “teslim kriteri” burada net: aynı iş iki kişide boşluk bırakmayacak şekilde paylaşıldı.</p>
+
+      <div class="note">
+        <b>Kim neyi önce yapacak? (ultra kısa özet)</b>
+        <ul>
+          <li><b>Mehmet</b>: Simülasyonun telemetriyi düzgün üretip backend’e göndermesini ayağa kaldır. <span class="mini">Lider notu: “Veri akmıyorsa” hiçbir şey başlayamaz.</span></li>
+          <li><b>Deniz</b>: DB şemasını ve telemetri ingest’i çalıştır; “latest state” görünümünü hazırla. <span class="mini">Lider notu: Rota hesaplama bunun üstünden gidecek.</span></li>
+          <li><b>Elif</b>: OpenAPI sözleşmesini kilitle ve rota üretiminin ilk sürümünü çıkar. <span class="mini">Lider notu: Mobil ekip endpoint isimlerini buradan alacak.</span></li>
+          <li><b>Şerif</b>: Flutter ekran akışını kur (Giriş → Rota → Harita → Durak). <span class="mini">Lider notu: UI basit olsun, büyük buton.</span></li>
+          <li><b>Eren</b>: Mobilde API katmanı + offline kuyruk temelini at; demo checklist’i çıkar. <span class="mini">Lider notu: Demo öncesi “uçtan uca” testi sen koşturacaksın.</span></li>
+        </ul>
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th>Kişi</th>
+            <th>Rol</th>
+            <th>Sorumluluklar</th>
+            <th>Teslim çıktıları</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><b>Mehmet Demir</b></td>
+            <td>
+              <span class="tag">Takım Lideri</span>
+              <span class="tag">Sanal Donanım / Simülasyon</span>
+            </td>
+            <td>
+              <ul>
+                <li>Proje kapsamının doğru kalmasını sağlamak (tür/araç/garaj kuralı). <span class="mini">Lider notu: “Kapsam kayması” olursa ben durduracağım.</span></li>
+                <li>Simülasyon script’inin tasarımı ve geliştirilmesi. <span class="mini">Lider notu: Önce stabil veri; sonra gerçekçilik.</span></li>
+                <li>Entegrasyon senaryosu: sim → backend ingest → rota → mobil. <span class="mini">Lider notu: Her sprint sonunda uçtan uca akış çalışmalı.</span></li>
+                <li>Demo akışını hazırlamak ve yönetmek. <span class="mini">Lider notu: Demo “tek senaryo”; dağıtık özellik göstermiyoruz.</span></li>
+              </ul>
+            </td>
+            <td>
+              <ul>
+                <li>Simülasyon v1: tür bazlı konteyner telemetrisi, batch gönderim, retry. <span class="mini">Lider notu: Retry/backoff şart; yoksa demo günü patlar.</span></li>
+                <li>Anomali/test verileri (GPS sapması, gecikme, sıçrama). <span class="mini">Lider notu: Bunlar “test modu”nda açılıp kapanabilsin.</span></li>
+                <li>Entegrasyon “demo dataseti” (her tür için örnek rota doğuracak veri). <span class="mini">Lider notu: Her türden en az 3 konteyner eşik üstü olsun.</span></li>
+              </ul>
+            </td>
+          </tr>
+          <tr>
+            <td><b>Deniz Kılınç</b></td>
+            <td>
+              <span class="tag">Backend Geliştirici</span>
+              <span class="tag">Veritabanı Yöneticisi</span>
+            </td>
+            <td>
+              <ul>
+                <li>DB şeması, indeksler, migration’lar. <span class="mini">Lider notu: “En minimal” ile başla; gereksiz alan eklemeyelim.</span></li>
+                <li>Telemetri ingest endpoint’leri ve doğrulama. <span class="mini">Lider notu: Doğrulama kuralları net olsun (0–100 doluluk vb.).</span></li>
+                <li>Rota planı / duraklar / toplama kayıtlarının kalıcılaştırılması. <span class="mini">Lider notu: Stop→Collection ilişkisini düzgün kur; rapor buradan çıkacak.</span></li>
+              </ul>
+            </td>
+            <td>
+              <ul>
+                <li>Postgres + (varsa) PostGIS kurulum ve şema v1. <span class="mini">Lider notu: Kurulum adımlarını kısa dokümana da yaz; herkes ayağa kaldırsın.</span></li>
+                <li>Telemetri tabloları + “latest state” görünümü. <span class="mini">Lider notu: Rota modülü buraya dayanacak; hızlı çalışmalı.</span></li>
+                <li>Collections (kayıt) endpoint’i ve durak state güncelleme. <span class="mini">Lider notu: Aynı kayıt 2 kez gitmesin; idempotent düşün.</span></li>
+              </ul>
+            </td>
+          </tr>
+          <tr>
+            <td><b>Elif Onat</b></td>
+            <td>
+              <span class="tag">Yazılım Mimarı</span>
+              <span class="tag">Backend Geliştirici</span>
+            </td>
+            <td>
+              <ul>
+                <li>API sözleşmesi (OpenAPI) ve modüler backend tasarımı. <span class="mini">Lider notu: Alan adları sabit; mobil tarafla birebir uyum.</span></li>
+                <li>Rota optimizasyon modülü: tür/araç/garaj kuralına göre rota üretimi. <span class="mini">Lider notu: Önce “durak sırası”; polyline ikinci iş.</span></li>
+                <li>Yetkilendirme mantığı (sürücü sadece kendi aracının rotasını görür). <span class="mini">Lider notu: Yanlış rota görünürse proje biter; burası kritik.</span></li>
+              </ul>
+            </td>
+            <td>
+              <ul>
+                <li>OpenAPI v1: auth, routes, stops, collections, telemetry. <span class="mini">Lider notu: Swagger çıktısını demo öncesi “tek kaynak” kabul edeceğiz.</span></li>
+                <li>TSP/VRP yaklaşımıyla “durak sırası” üretimi (MVP: tür başına tek araç). <span class="mini">Lider notu: Çözüm yoksa bile fallback (basit sıralama) planla.</span></li>
+                <li>Rota versiyonlama/güncelleme stratejisi (rota çok sık değişmesin). <span class="mini">Lider notu: Rota değişince mobilde “yeni rota geldi” net görünsün.</span></li>
+              </ul>
+            </td>
+          </tr>
+          <tr>
+            <td><b>Şerif Berke Karaman</b></td>
+            <td>
+              <span class="tag">Flutter Mobil Geliştirici</span>
+              <span class="tag">UX/UI Tasarımcı</span>
+            </td>
+            <td>
+              <ul>
+                <li>Mobil uygulama tasarımı: giriş, rota, harita, durak akışı. <span class="mini">Lider notu: Akış “Giriş → Rota → Durak → Kayıt” net olsun.</span></li>
+                <li>Kullanılabilirlik: sürücünün “tek elde” hızlı işlem yapması. <span class="mini">Lider notu: Her ekranda 1 ana aksiyon; gereksiz buton yok.</span></li>
+                <li>Harita entegrasyonu ve rota görünümü. <span class="mini">Lider notu: Marker + sıra yeter; çizgi şart değil.</span></li>
+              </ul>
+            </td>
+            <td>
+              <ul>
+                <li>Flutter UI akışları + tasarım sistemi (renk, tipografi, komponentler). <span class="mini">Lider notu: Sade; okunaklı; sürücü için “büyük buton”.</span></li>
+                <li>Harita ekranı: marker’lar, durak listesi, navigasyona yönlendirme. <span class="mini">Lider notu: Liste sırası, backend stop sırası ile aynı olmalı.</span></li>
+                <li>Durak detay ekranı: tür, adres, durum, aksiyonlar. <span class="mini">Lider notu: Done/Skip aksiyonları en görünür yerde.</span></li>
+              </ul>
+            </td>
+          </tr>
+          <tr>
+            <td><b>Eren Kadiroğlu</b></td>
+            <td>
+              <span class="tag">Flutter Mobil Geliştirici</span>
+              <span class="tag">Tester</span>
+            </td>
+            <td>
+              <ul>
+                <li>Mobilde veri katmanı: API istemcisi, local cache, offline queue. <span class="mini">Lider notu: Offline kuyruk demo günü hayat kurtarır; öncelik ver.</span></li>
+                <li>Test senaryoları ve hata raporlama standardı. <span class="mini">Lider notu: “Nasıl tekrar edilir?” adımı yoksa rapor kabul etmiyorum.</span></li>
+                <li>E2E doğrulama: sim verisi ile rota → mobil → toplama kaydı. <span class="mini">Lider notu: Her demo öncesi bu akış 1 kez koşulacak.</span></li>
+              </ul>
+            </td>
+            <td>
+              <ul>
+                <li>Offline-first altyapı: local DB + senkron kuyruğu. <span class="mini">Lider notu: Kuyrukta “başarılı/başarısız” durumu net görünsün.</span></li>
+                <li>Integration test checklist’i ve “Demo günü” test koşumu. <span class="mini">Lider notu: Checklist kısa olsun; ama her seferinde uygulansın.</span></li>
+                <li>Hata kayıt formatı (adım adım çoğaltılabilir rapor). <span class="mini">Lider notu: Ekran görüntüsü varsa çok iyi; yoksa en az log ekle.</span></li>
+              </ul>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <div class="grid cols2">
+      <section>
+        <h2>4) Adım adım çalışma şekli (her sprint aynı düzen)</h2>
+        <p class="muted">Aşağıdaki akış, hem geliştirmeyi hem de “hata çıkmasın” diye kontrol kapılarını standartlaştırır.</p>
+
+        <h3>Günlük düzen</h3>
+        <ul>
+          <li><b>Gün başı</b>: Herkes 3 madde yazar → “Dün / Bugün / Engel”. <span class="mini">Lider notu: Engel varsa saklamayın; erken söylenirse çözülür.</span></li>
+          <li><b>Gün içi</b>: Önce sözleşmeler (API, DB şema, durumlar) net → sonra kod. <span class="mini">Lider notu: 30 dk konuşup 3 gün bug fix yemekten iyidir.</span></li>
+          <li><b>Gün sonu</b>: Kısa durum özeti + yarın için risk/engel notu. <span class="mini">Lider notu: “Bugün ne çıktı?” 1 cümle şart.</span></li>
+        </ul>
+
+        <h3>Haftalık düzen</h3>
+        <ul>
+          <li><b>Sprint planı</b>: hedef çıktı + kabul kriterleri + demo senaryosu. <span class="mini">Lider notu: Hedef 1–2 sayfa; uzun planlar okunmuyor.</span></li>
+          <li><b>Demo</b>: tek akış; “çalışıyor mu?” tartışması değil, “kabul kriteri geçti mi?” kontrolü. <span class="mini">Lider notu: Demo öncesi herkes kendi parçasını 1 kez koşsun.</span></li>
+          <li><b>Retro</b>: 3 soru → “İyi giden / Sorun / İyileştirme”. <span class="mini">Lider notu: Suçlama yok; çözüm var.</span></li>
+        </ul>
+
+        <div class="callout">
+          <b>Kural:</b> “Kabul kriteri” yazılmamış hiçbir iş “bitti” sayılmaz. Kabul kriteri = test edilebilir, ölçülebilir sonuç.
+        </div>
+      </section>
+
+      <section>
+        <h2>5) Ortak sözleşmeler (tutarlılık için)</h2>
+        <h3>Durak durumları</h3>
+        <ul>
+          <li><b>pending</b>: sırada <span class="mini">Lider notu: Varsayılan durum; rota ilk açıldığında hepsi pending.</span></li>
+          <li><b>arrived</b>: sürücü konuma vardı <span class="mini">Lider notu: İsterseniz opsiyonel; ama “vardım” butonu sahada işe yarar.</span></li>
+          <li><b>done</b>: toplandı ve kayıt oluşturuldu <span class="mini">Lider notu: Done demek = collection kaydı var demek.</span></li>
+          <li><b>skipped</b>: atlandı (sebep zorunlu) <span class="mini">Lider notu: Sebep listesi kısa olsun (erişilemedi, dolu değil, arızalı vb.).</span></li>
+        </ul>
+
+        <h3>Zaman ve konum</h3>
+        <ul>
+          <li>Backend tüm zamanları <b>UTC</b> saklar; mobil ekranda yerel saat gösterir.</li>
+          <li>Konumlar <b>lat/lng</b> olarak tutulur; DB’de coğrafi indeks opsiyoneldir.</li>
+        </ul>
+
+        <h3>“Garaj” başlangıç/bitiş noktası</h3>
+        <ul>
+          <li>Her araç için bir <b>garage location</b> tanımı vardır.</li>
+          <li>Rota planı garajdan başlar ve garaja döner (MVP).</li>
+        </ul>
+      </section>
+    </div>
+
+    <section>
+      <h2>6) Teslim / kontrol listesi (iş “bitti” demeden önce)</h2>
+      <p class="muted">Bu listeyi herkes kullanır. Amaç: kaliteyi standartlaştırmak ve demo gününde sürpriz yaşamamak.</p>
+      <ul class="checklist">
+        <li>
+          <div class="box"></div>
+          <div>
+            <b>Kabul kriteri karşılandı</b>
+            <div class="small">İşin açıklamasında yazan “ne zaman kabul edilir?” maddeleri gerçekten sağlandı.</div>
+          </div>
+        </li>
+        <li>
+          <div class="box"></div>
+          <div>
+            <b>Entegrasyon bozulmadı</b>
+            <div class="small">Sim → Backend → Mobil uçtan uca akışında ilgili kısım çalışıyor.</div>
+          </div>
+        </li>
+        <li>
+          <div class="box"></div>
+          <div>
+            <b>Hata senaryosu var</b>
+            <div class="small">Offline/timeout/invalid data gibi durumlarda sistem kontrollü davranıyor.</div>
+          </div>
+        </li>
+        <li>
+          <div class="box"></div>
+          <div>
+            <b>Log/çıktı okunabilir</b>
+            <div class="small">Sorun olursa 5 dakikada teşhis edilecek kadar anlamlı log/uyarı var.</div>
+          </div>
+        </li>
+        <li>
+          <div class="box"></div>
+          <div>
+            <b>Dokümantasyon güncel</b>
+            <div class="small">API/akış değiştiyse bu dokümana veya ilgili teknik notlara işlendi.</div>
+          </div>
+        </li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>7) İlk hedef: “Çalışan Demo” (Mini‑MVP)</h2>
+      <p>
+        Bu bölüm “herkes aynı resmi görsün” diye yazıldı. GitHub süreçleri ve issue listesi bir sonraki adımda ayrıca hazırlanacak.
+      </p>
+
+      <h3>Demo Adımı 1 — Temel veri akışı</h3>
+      <ul>
+        <li>Simülasyon v1: 5 atık türü için konteyner telemetrisi üretir ve gönderir. <span class="mini">Lider notu: Her türden en az birkaç konteyner “eşik üstü” olacak şekilde veri üret.</span></li>
+        <li>Backend ingest: telemetrileri alır ve DB’ye yazar. <span class="mini">Lider notu: Hatalı payload gelirse anlaşılır hata mesajı dön.</span></li>
+        <li>DB şema v1: konteyner, telemetri, araç, sürücü tabloları hazır. <span class="mini">Lider notu: İsimlendirme tutarlı olsun; sonradan rename istemiyorum.</span></li>
+      </ul>
+
+      <h3>Demo Adımı 2 — Rota + mobil görüntüleme</h3>
+      <ul>
+        <li>Rota üretimi v1: tür başına araç için eşik üstü konteynerları seçer ve durak sırası üretir. <span class="mini">Lider notu: İlk sürümde mesafe “kuş uçuşu” olabilir; yeter ki sıra gelsin.</span></li>
+        <li>Mobil v1: plaka ile giriş, “aktif rota”yı çekme, haritada durakları gösterme. <span class="mini">Lider notu: Rota boşsa ekranda “şu an görev yok” yazsın.</span></li>
+        <li>Toplama kaydı v1: “done/skipped” ve temel miktar alanı backend’e gider. <span class="mini">Lider notu: Done’da miktar zorunlu; skipped’de sebep zorunlu.</span></li>
+      </ul>
+
+      <div class="callout">
+        <b>Demo senaryosu (Mini‑MVP):</b> Simülasyon veri üretir → Cam aracı için eşik üstü cam konteynerları seçilir → rota oluşur → sürücü mobilde görür → 1 durağı “done” yapar → kayıt DB’ye düşer.
+      </div>
+    </section>
+
+    <section>
+      <h2>8) Yol haritası (MVP → Pilot → Ürün)</h2>
+      <p class="muted">
+        Bu plan “kapsamı kontrol altında tutmak” için hazırlanmıştır. Her aşama sonunda çalışan bir çıktı alınır; bir sonraki aşamaya geçmeden önce demo senaryosu başarıyla koşulur.
+      </p>
+
+      <h3>Aşama A — MVP</h3>
+      <ul>
+        <li><b>A1:</b> Simülasyon v1 + Telemetri ingest + DB şema v1 (tür/araç/sürücü/konteyner/telemetri). <span class="mini">Lider notu: Önce temel akış; “mükemmel” değil “çalışan” hedef.</span></li>
+        <li><b>A2:</b> Tür başına tek araç için rota üretimi (durak sırası) + rota planı/durak persist. <span class="mini">Lider notu: Stop sırası stabil olmalı; her çalıştırmada bambaşka olmasın.</span></li>
+        <li><b>A3:</b> Flutter: login (plaka) + aktif rota çekme + haritada duraklar + navigasyona yönlendirme. <span class="mini">Lider notu: Sürücü için “rota görünmüyorsa” proje yok demektir.</span></li>
+        <li><b>A4:</b> Durak state (arrived/done/skipped) + toplama kaydı (miktar, birim, not) + temel rapor ekranı (mobilde geçmiş). <span class="mini">Lider notu: Kayıt altına alma MVP’nin kalbi; boş bırakmayın.</span></li>
+      </ul>
+
+      <h3>Aşama B — Pilot</h3>
+      <ul>
+        <li><b>B1:</b> Offline-first (local cache + kuyruk + tekrar deneme) ve idempotent kayıt gönderimi. <span class="mini">Lider notu: İnternet gidince iş durmayacak; hedef bu.</span></li>
+        <li><b>B2:</b> Yol ağına göre mesafe/süre (OSRM/harita servisi) ile daha gerçekçi rota. <span class="mini">Lider notu: “Sıra” doğruysa bile süre tahmini için yol ağı şart.</span></li>
+        <li><b>B3:</b> Rota stabilitesi (çok sık değişmesin) + canlı güncelleme (SSE/WS). <span class="mini">Lider notu: Sürücünün kafası karışmasın; değişiklikte net uyarı.</span></li>
+        <li><b>B4:</b> Pilot raporları: tür bazlı toplanan miktar, araç/sürücü performansı, atlanan durak sebepleri. <span class="mini">Lider notu: Raporlar sunumda çok güçlü; basit başlayın.</span></li>
+      </ul>
+
+      <h3>Aşama C — Ürünleştirme</h3>
+      <ul>
+        <li><b>C1:</b> VRP (kapasite/zaman penceresi) gibi ileri kısıtlar (gerekiyorsa). <span class="mini">Lider notu: Gerçek ihtiyaç gelmeden karmaşıklık eklemeyelim.</span></li>
+        <li><b>C2:</b> Operasyon paneli (web): rota üret/ata, canlı takip, rapor indirme (opsiyonel ama yüksek değer). <span class="mini">Lider notu: Belediyeye “yönetim ekranı” gösterirsek proje daha inandırıcı olur.</span></li>
+        <li><b>C3:</b> Güvenlik/izlenebilirlik: rol bazlı erişim, audit trail, log/metric dashboard. <span class="mini">Lider notu: Hata olunca “neden oldu?” sorusuna cevap vermeliyiz.</span></li>
+      </ul>
+
+      <div class="callout">
+        <b>Kapsam kilidi:</b> MVP’de “5 tür = 5 araç” + “garajdan çık/garaja dön” + “eşik üstü seç, durak sırası üret” + “mobilde görev akışı ve kayıt” tamamlanmadan yeni özellik eklenmez.
+      </div>
+
+      <h3>Sahiplik matrisi (RACI özeti)</h3>
+      <p class="small">R: Responsible (yapan) • A: Accountable (son onay) • C: Consulted (görüş) • I: Informed (bilgi)</p>
+      <table>
+        <thead>
+          <tr>
+            <th>İş paketi</th>
+            <th>Mehmet</th>
+            <th>Deniz</th>
+            <th>Elif</th>
+            <th>Şerif</th>
+            <th>Eren</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><b>Simülasyon (telemetri üretimi)</b></td>
+            <td>R/A</td>
+            <td>C</td>
+            <td>C</td>
+            <td>I</td>
+            <td>I</td>
+          </tr>
+          <tr>
+            <td><b>DB Şeması + migration</b></td>
+            <td>I</td>
+            <td>R/A</td>
+            <td>C</td>
+            <td>I</td>
+            <td>I</td>
+          </tr>
+          <tr>
+            <td><b>API sözleşmesi (OpenAPI) + mimari</b></td>
+            <td>I</td>
+            <td>C</td>
+            <td>R/A</td>
+            <td>C</td>
+            <td>C</td>
+          </tr>
+          <tr>
+            <td><b>Rota optimizasyonu (tür/araç/garaj kuralı)</b></td>
+            <td>C</td>
+            <td>C</td>
+            <td>R/A</td>
+            <td>I</td>
+            <td>I</td>
+          </tr>
+          <tr>
+            <td><b>Backend endpoint’leri (telemetry/routes/stops/collections)</b></td>
+            <td>I</td>
+            <td>R</td>
+            <td>A</td>
+            <td>C</td>
+            <td>C</td>
+          </tr>
+          <tr>
+            <td><b>Flutter UI/UX (harita, akışlar)</b></td>
+            <td>I</td>
+            <td>I</td>
+            <td>C</td>
+            <td>R/A</td>
+            <td>R</td>
+          </tr>
+          <tr>
+            <td><b>Offline queue + test senaryoları</b></td>
+            <td>I</td>
+            <td>C</td>
+            <td>C</td>
+            <td>R</td>
+            <td>R/A</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <footer>
+      Hazırlayan: Mehmet Demir (Takım Lideri) • Bu doküman ekip içi kullanım içindir.
+    </footer>
+  </div>
+</body>
+</html>
+

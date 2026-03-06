@@ -1,0 +1,622 @@
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>GitHub Ekip Rehberi — Atık Yönetimi Projesi</title>
+  <style>
+    :root{
+      --page:#ffffff;
+      --text:#111827;
+      --muted:#4b5563;
+      --border:#e5e7eb;
+      --soft:#f9fafb;
+      --accent:#2563eb;
+      --accentSoft:#eff6ff;
+      --ok:#16a34a;
+      --warn:#b45309;
+      --bad:#dc2626;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, "Noto Sans", "Liberation Sans", sans-serif;
+      line-height:1.65;
+      background: var(--page);
+      color: var(--text);
+      padding: 22px 14px;
+    }
+    .wrap{max-width:980px; margin:0 auto}
+    header{
+      border:1px solid var(--border);
+      background: var(--soft);
+      border-radius:12px;
+      padding:16px 16px 12px 16px;
+    }
+    h1{margin:0 0 6px 0; font-size:20px}
+    .sub{margin:0; color:var(--muted); font-size:14px}
+    .meta{
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px 14px;
+      margin-top:12px;
+      padding-top:12px;
+      border-top:1px dashed var(--border);
+      color:var(--muted);
+      font-size:13px;
+    }
+    .meta b{color:var(--text); font-weight:800}
+    section{
+      border:1px solid var(--border);
+      background:#fff;
+      border-radius:12px;
+      padding:14px 14px 12px 14px;
+      margin-top:12px;
+    }
+    h2{margin:0 0 10px 0; font-size:16px}
+    h3{margin:14px 0 8px 0; font-size:14px}
+    p{margin:0 0 10px 0}
+    .muted{color:var(--muted)}
+    ul{margin:8px 0 0 18px; padding:0}
+    li{margin:4px 0}
+    .kbd{
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      font-size:12px;
+      padding:.15rem .4rem;
+      border:1px solid var(--border);
+      border-bottom-width:2px;
+      border-radius:8px;
+      background: #fff;
+      color:var(--text);
+      white-space:nowrap;
+    }
+    .note{
+      margin-top:10px;
+      padding:10px 12px;
+      border:1px solid var(--border);
+      border-left:4px solid var(--accent);
+      border-radius:12px;
+      background: var(--accentSoft);
+      color: var(--muted);
+      font-size:12.5px;
+    }
+    .note b{color:var(--text)}
+
+    table{
+      width:100%;
+      border-collapse:collapse;
+      margin-top:10px;
+      font-size:13px;
+    }
+    th,td{
+      border:1px solid var(--border);
+      padding:10px 10px;
+      vertical-align:top;
+    }
+    th{
+      text-align:left;
+      background: var(--soft);
+      font-weight:800;
+    }
+    .tag{
+      display:inline-block;
+      border:1px solid var(--border);
+      padding:2px 8px;
+      border-radius:999px;
+      font-size:12px;
+      color:var(--muted);
+      background: var(--soft);
+      margin:2px 6px 2px 0;
+      white-space:nowrap;
+    }
+
+    /* Diagrams */
+    .diagram{
+      border:1px solid var(--border);
+      border-radius:12px;
+      background:#fff;
+      padding:12px;
+      margin-top:10px;
+      overflow:auto;
+    }
+    .flow{
+      display:flex;
+      gap:10px;
+      align-items:center;
+      flex-wrap:wrap;
+      min-width:760px;
+    }
+    .flow.vertical{
+      flex-direction:column;
+      align-items:stretch;
+      flex-wrap:nowrap;
+      min-width:0;
+      max-width:520px;
+      margin:0 auto;
+    }
+    .node{
+      border:1px solid var(--border);
+      background: var(--soft);
+      border-radius:12px;
+      padding:10px 10px;
+      min-width:140px;
+    }
+    .flow.vertical .node{
+      min-width:0;
+    }
+    .node b{display:block; font-weight:900}
+    .node small{color:var(--muted); display:block; margin-top:4px}
+    .arrow{
+      font-weight:900;
+      color:var(--muted);
+      padding:0 2px;
+    }
+    .flow.vertical .arrow{
+      width:100%;
+      text-align:center;
+      padding:2px 0;
+      font-size:18px;
+      line-height:1;
+    }
+    .node.ok{border-color:#bbf7d0; background:#f0fdf4}
+    .node.warn{border-color:#fed7aa; background:#fff7ed}
+    .node.bad{border-color:#fecaca; background:#fef2f2}
+
+    .twoCol{
+      display:grid;
+      gap:12px;
+    }
+    @media (min-width: 920px){
+      .twoCol{grid-template-columns: 1fr 1fr;}
+    }
+
+    pre{
+      margin:10px 0 0 0;
+      padding:10px 12px;
+      border:1px solid var(--border);
+      border-radius:12px;
+      background: #fff;
+      overflow:auto;
+      font-size:12.5px;
+      line-height:1.55;
+    }
+    .small{font-size:12px; color:var(--muted)}
+    .ok{color:var(--ok); font-weight:800}
+    .warn{color:var(--warn); font-weight:800}
+    .bad{color:var(--bad); font-weight:800}
+
+    footer{
+      margin-top:14px;
+      color:var(--muted);
+      font-size:12px;
+      text-align:center;
+    }
+
+    @media print{
+      body{padding:0}
+      .wrap{max-width:100%; margin:0}
+      @page{size:A4; margin:12mm}
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <h1>GitHub Ekip Rehberi (Kısa ve Uygulanabilir)</h1>
+      <p class="sub">
+        Bu sayfa, GitHub bilmeyen ekip üyelerinin projede sorunsuz çalışması için hazırlandı. Amaç: herkes aynı düzeni uygulasın, lider olarak ben de süreci rahat yönetecek olayım.
+      </p>
+      <div class="meta">
+        <div><b>Owner:</b> Mehmet Demir</div>
+        <div><b>Proje:</b> Akıllı Şehir Atık Yönetimi</div>
+        <div><b>Yazdırma:</b> <span class="kbd">Ctrl</span> + <span class="kbd">P</span></div>
+        <div><b>Kural:</b> Her iş PR ile gelir</div>
+      </div>
+    </header>
+
+    <section>
+      <h2>0) Tek seferlik örnek senaryo (kronolojik)</h2>
+      <p class="muted">Bu senaryoyu bir kez anlattığımızda herkes “Issue → Branch → PR → Onay” mantığını oturtacak.</p>
+
+      <div class="diagram">
+        <div class="flow vertical">
+          <div class="node ok"><b>Şerif</b><small>Issue #12: “Flutter Login”</small></div>
+          <div class="arrow">↓</div>
+          <div class="node"><b>Branch</b><small><span class="kbd">git checkout -b feature/flutter-login</span><br/>Yeni çalışma alanı açar (main bozulmaz)</small></div>
+          <div class="arrow">↓</div>
+          <div class="node"><b>Commit + Push</b><small><span class="kbd">git add .</span> → değişikliği seçer<br/><span class="kbd">git commit -m "add: ..."</span> → kaydeder<br/><span class="kbd">git push</span> → GitHub’a gönderir</small></div>
+          <div class="arrow">↓</div>
+          <div class="node warn"><b>PR aç</b><small>GitHub’da “Pull Request” aç<br/>Liderden inceleme (review) iste</small></div>
+          <div class="arrow">↓</div>
+          <div class="node ok"><b>Mehmet</b><small>Review → onay → merge (main güncellenir)</small></div>
+        </div>
+      </div>
+
+      <h3>Bu şemadaki komutlar (terminal kullananlar için)</h3>
+      <p class="muted">GitHub Desktop kullanıyorsanız aynı işlemler butonlarla yapılır; isimleri aynıdır (Commit / Push / Pull Request).</p>
+      <table>
+        <thead>
+          <tr>
+            <th>Komut</th>
+            <th>Kısaca ne yapar?</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="kbd">git clone &lt;repo_url&gt;</span></td>
+            <td>Projeyi GitHub’dan kendi bilgisayarına indirir (ilk kez).</td>
+          </tr>
+          <tr>
+            <td><span class="kbd">git checkout -b feature/...</span></td>
+            <td>Yeni branch açar ve ona geçer (işini burada yaparsın).</td>
+          </tr>
+          <tr>
+            <td><span class="kbd">git add .</span></td>
+            <td>Değişiklikleri commit’e dahil etmek için seçer.</td>
+          </tr>
+          <tr>
+            <td><span class="kbd">git commit -m "..."</span></td>
+            <td>Seçili değişiklikleri “kayıt” eder (geri dönülebilir adım).</td>
+          </tr>
+          <tr>
+            <td><span class="kbd">git push</span></td>
+            <td>Branch’ini GitHub’a gönderir (PR açabilmen için şart).</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Sıra</th>
+            <th>Kim?</th>
+            <th>Ne yapıyor?</th>
+            <th>Çıktı</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><b>1</b></td>
+            <td><b>Mehmet</b> (Owner)</td>
+            <td>GitHub’da Issue açar: <span class="kbd">#12 Flutter Login</span> ve kabul kriterini yazar.</td>
+            <td>İş tanımı netleşir</td>
+          </tr>
+          <tr>
+            <td><b>2</b></td>
+            <td><b>Şerif</b></td>
+            <td>Repoyu kendi bilgisayarına çeker (clone) ve <b>main</b>’den yeni branch açar: <span class="kbd">feature/flutter-login</span>.</td>
+            <td>Güvenli çalışma alanı (branch)</td>
+          </tr>
+          <tr>
+            <td><b>3</b></td>
+            <td><b>Şerif</b></td>
+            <td>Kodu değiştirir, küçük commit’ler atar. Örn commit mesajı: <span class="kbd">add: driver login screen</span>.</td>
+            <td>Değişiklikler kayıt altına alınır</td>
+          </tr>
+          <tr>
+            <td><b>4</b></td>
+            <td><b>Şerif</b></td>
+            <td>Branch’ini GitHub’a gönderir (push) ve PR açar. PR açıklamasına 2 satır yazar: “Ne değişti?” + “Nasıl test ettim?”</td>
+            <td>Pull Request oluşur</td>
+          </tr>
+          <tr>
+            <td><b>5</b></td>
+            <td><b>Mehmet</b></td>
+            <td>PR’ı inceler: kod mantığı + isimlendirme + kabul kriteri. Gerekirse “şunu düzelt” diye yorum bırakır.</td>
+            <td>Review geri bildirimi</td>
+          </tr>
+          <tr>
+            <td><b>6</b></td>
+            <td><b>Şerif</b></td>
+            <td>İstenen düzeltmeleri yapar, tekrar push eder. (PR otomatik güncellenir.)</td>
+            <td>PR güncellenir</td>
+          </tr>
+          <tr>
+            <td><b>7</b></td>
+            <td><b>Mehmet</b></td>
+            <td>Her şey uygunsa PR’ı <b>merge</b> eder. Issue’yu kapatır.</td>
+            <td>Değişiklikler <b>main</b>’e girer</td>
+          </tr>
+          <tr>
+            <td><b>8</b></td>
+            <td><b>Ekip</b> (Herkes)</td>
+            <td>Kendi bilgisayarında main’i günceller (pull/sync). Sonra yeni işe branch açar.</td>
+            <td>Herkes güncel kodla devam eder</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="note">
+        <b>Lider notu:</b> Bu senaryodaki en kritik iki nokta:
+        <ul>
+          <li><b>Main’e direkt commit yok.</b> Her iş branch + PR.</li>
+          <li><b>PR açıklaması boş olmayacak.</b> “Ne yaptın?” ve “Nasıl test ettin?” yazılacak.</li>
+        </ul>
+      </div>
+    </section>
+
+    <section>
+      <h2>1) GitHub’ı 3 cümlede anlayalım</h2>
+      <ul>
+        <li><b>Repository (Repo)</b>: Projenin tüm kodunun durduğu yer.</li>
+        <li><b>Branch</b>: Kodun ayrı bir kopyası gibi düşünebilirsin. İşini burada yaparsın, ana kodu bozmazsın.</li>
+        <li><b>Pull Request (PR)</b>: “Benim yaptığım değişiklikleri ana koda ekleyelim mi?” diye inceleme isteği.</li>
+      </ul>
+      <div class="note">
+        <b>Lider notu:</b> Bizim ekipte “ana kod” = <b>main</b>. Main’e kimse direkt commit atmayacak. Her şey branch + PR.
+      </div>
+    </section>
+
+    <section>
+      <h2>2) Bizim standart akış (şekilli anlatım)</h2>
+      <p class="muted">Bu akış dışına çıkmayın. Çıkarsanız aynı hatayı 2–3 gün geri sararak düzeltmek zorunda kalıyoruz.</p>
+      <div class="diagram">
+        <div class="flow vertical">
+          <div class="node ok"><b>Issue</b><small>Yapılacak iş tanımı</small></div>
+          <div class="arrow">↓</div>
+          <div class="node"><b>Branch</b><small>feature/… veya fix/…</small></div>
+          <div class="arrow">↓</div>
+          <div class="node"><b>Commit</b><small>Küçük, anlaşılır adımlar</small></div>
+          <div class="arrow">↓</div>
+          <div class="node"><b>Push</b><small>GitHub’a gönder</small></div>
+          <div class="arrow">↓</div>
+          <div class="node warn"><b>Pull Request</b><small>İnceleme + test</small></div>
+          <div class="arrow">↓</div>
+          <div class="node ok"><b>Merge</b><small>main’e eklenir</small></div>
+        </div>
+      </div>
+      <div class="note">
+        <b>Lider notu:</b> PR açmadan “bitti” yok. PR = yaptığın işin hem kanıtı hem de güvenli kontrol noktası.
+      </div>
+    </section>
+
+    <section>
+      <h2>3) Hangi aracı kullanacağız?</h2>
+      <div class="twoCol">
+        <div>
+          <h3>A) En kolay yol: GitHub Desktop (önerilen)</h3>
+          <ul>
+            <li>Görsel arayüz, hata yapma ihtimali az.</li>
+            <li>Branch/commit/push/PR açma adımları çok net.</li>
+          </ul>
+          <!-- Not kaldırıldı: ekip içi sunum için sadeleştirildi -->
+        </div>
+        <div>
+          <h3>B) Terminal (opsiyonel)</h3>
+          <ul>
+            <li>Hızlıdır ama yanlış komutla karışabilir.</li>
+            <li>Bu dokümanda “en gerekli” komutlar var.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>4) Branch isimleri (bizim kuralımız)</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Tür</th>
+            <th>Format</th>
+            <th>Örnek</th>
+            <th>Ne zaman?</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="tag">Feature</span></td>
+            <td><span class="kbd">feature/kisa-aciklama</span></td>
+            <td><span class="kbd">feature/flutter-login</span></td>
+            <td>Yeni özellik</td>
+          </tr>
+          <tr>
+            <td><span class="tag">Fix</span></td>
+            <td><span class="kbd">fix/kisa-aciklama</span></td>
+            <td><span class="kbd">fix/route-stop-order</span></td>
+            <td>Hata düzeltme</td>
+          </tr>
+          <tr>
+            <td><span class="tag">Docs</span></td>
+            <td><span class="kbd">docs/kisa-aciklama</span></td>
+            <td><span class="kbd">docs/api-readme</span></td>
+            <td>Dokümantasyon</td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="note">
+        <b>Lider notu:</b> Branch adı kısa olsun. Türkçe karakter kullanmayın. Boşluk yok.
+      </div>
+    </section>
+
+    <section>
+      <h2>5) “Ben bir işi nasıl yapacağım?” (adım adım)</h2>
+      <h3>Adım 1 — Issue’yu oku</h3>
+      <ul>
+        <li>Ne istendiğini anla: çıktı ne olacak?</li>
+        <li>Kabul kriteri var mı? </li>
+      </ul>
+      <h3>Adım 2 — Branch aç</h3>
+      <ul>
+        <li>Branch’i <b>main</b> üzerinden oluştur.</li>
+      </ul>
+      <h3>Adım 3 — Değişikliği yap</h3>
+      <ul>
+        <li>Küçük parçalara böl. Tek seferde 50 dosya değiştirme.</li>
+      </ul>
+      <h3>Adım 4 — Commit at</h3>
+      <ul>
+        <li>Commit mesajı kısa ve net: <span class="kbd">add</span>/<span class="kbd">fix</span>/<span class="kbd">update</span> ile başla.</li>
+      </ul>
+      <h3>Adım 5 — Push</h3>
+      <ul>
+        <li>Branch’ini GitHub’a gönder.</li>
+      </ul>
+      <h3>Adım 6 — PR aç</h3>
+      <ul>
+        <li>Başlık: ne yaptın?</li>
+        <li>Açıklama: neden yaptın?</li>
+        <li>Test: nasıl denedin?</li>
+      </ul>
+      <div class="note">
+        <b>Lider notu:</b> PR açıklamasına 2 satır yeter: “Ne değişti?” + “Nasıl test ettim?”
+      </div>
+    </section>
+
+    <section>
+      <h2>6) PR şablonu (kopyala-yapıştır)</h2>
+      <pre>
+## Özet
+- ...
+
+## Ne değişti?
+- ...
+
+## Nasıl test ettim?
+- [ ] Çalıştırdım / build aldım
+- [ ] Temel akışı denedim
+
+## Not
+- (Varsa) Risk / eksik / takip işi
+      </pre>
+      <div class="note">
+        <b>Lider notu:</b> “Test ettim” yazıp test etmemek en pahalı hata. En azından temel akışı bir kez çalıştırın.
+      </div>
+    </section>
+
+    <section>
+      <h2>7) Çakışma (Conflict) nedir? </h2>
+      <p class="muted">Aynı satırı iki kişi değiştirirse GitHub “hangisi doğru?” diye sorar. Bu normal.</p>
+      <div class="diagram">
+        <div class="flow vertical">
+          <div class="node"><b>Senin Branch</b><small>sen değişiklik yaptın</small></div>
+          <div class="arrow">↓</div>
+          <div class="node"><b>main</b><small>başkası aynı yerleri değiştirdi</small></div>
+          <div class="arrow">↓</div>
+          <div class="node warn"><b>Conflict</b><small>GitHub “hangisi doğru?” diye sorar</small></div>
+          <div class="arrow">↓</div>
+          <div class="node ok"><b>Çözüm</b><small>satırları seç + test et + PR devam</small></div>
+        </div>
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th>Ne yap?</th>
+            <th>Ne yapma?</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>
+              <ul>
+                <li>Önce lideri haberdar et.</li>
+                <li>Değişiklikleri satır satır oku.</li>
+                <li>Çözünce uygulamayı/servisi bir kez çalıştır.</li>
+              </ul>
+            </td>
+            <td>
+              <ul>
+                <li class="bad">Rastgele “Accept all” yapma.</li>
+                <li class="bad">Test etmeden merge isteme.</li>
+              </ul>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="note">
+        <b>Lider notu:</b> Conflict görürsen paniğe gerek yok. “Ne değişti?” sorusunu birlikte çözeriz.
+      </div>
+    </section>
+
+    <section>
+      <h2>8) Windows (PowerShell) mini komut listesi (opsiyonel)</h2>
+      <p class="muted">GitHub Desktop kullanıyorsan bu bölüm şart değil. Terminal kullanacaksan “en minimum” budur.</p>
+      <table>
+        <thead>
+          <tr>
+            <th>İş</th>
+            <th>Komut</th>
+            <th>Ne işe yarar?</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Durumu gör</td>
+            <td><span class="kbd">git status</span></td>
+            <td>Hangi dosyalar değişmiş?</td>
+          </tr>
+          <tr>
+            <td>Branch gör</td>
+            <td><span class="kbd">git branch</span></td>
+            <td>Hangi branch’teyim?</td>
+          </tr>
+          <tr>
+            <td>Branch aç</td>
+            <td><span class="kbd">git checkout -b feature/isim</span></td>
+            <td>Yeni branch oluştur + geç</td>
+          </tr>
+          <tr>
+            <td>Değişikliği ekle</td>
+            <td><span class="kbd">git add .</span></td>
+            <td>Commit’e hazırlanır</td>
+          </tr>
+          <tr>
+            <td>Commit</td>
+            <td><span class="kbd">git commit -m "add: ..."</span></td>
+            <td>Kayıt</td>
+          </tr>
+          <tr>
+            <td>Push</td>
+            <td><span class="kbd">git push -u origin HEAD</span></td>
+            <td>GitHub’a gönder</td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="note">
+        <b>Lider notu:</b> Terminal kullanıyorsanız “main’de çalışmayın”. Branch açmadan kod yazmak yok.
+      </div>
+    </section>
+
+    <section>
+      <h2>9) En önemli 10 kural (kısa checklist)</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Yap</th>
+            <th>Yapma</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>
+              <ul>
+                <li><span class="ok">✓</span> Her iş için branch aç</li>
+                <li><span class="ok">✓</span> Küçük commit’ler at</li>
+                <li><span class="ok">✓</span> PR aç ve açıklama yaz</li>
+                <li><span class="ok">✓</span> PR’da nasıl test ettiğini yaz</li>
+                <li><span class="ok">✓</span> Takıldığında erken sor</li>
+              </ul>
+            </td>
+            <td>
+              <ul>
+                <li><span class="bad">✗</span> main’e direkt commit atma</li>
+                <li><span class="bad">✗</span> PR’sız “bitti” deme</li>
+                <li><span class="bad">✗</span> Conflict’te rastgele seçim yapma</li>
+                <li><span class="bad">✗</span> Büyük değişikliği tek PR’da yığma</li>
+                <li><span class="bad">✗</span> Test etmeden merge isteme</li>
+              </ul>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="note">
+        <b>Lider notu:</b> Bu kuralların amacı “hız” değil, <b>kontrollü ilerlemek</b>. Kontrol = daha az bug = daha hızlı teslim.
+      </div>
+    </section>
+
+    <footer>
+      Hazırlayan: Mehmet Demir (Owner / Takım Lideri) • Ekip içi kullanım içindir
+    </footer>
+  </div>
+</body>
+</html>
+

@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>AI Brifing — Deniz Kılınç (Backend & Veritabanı)</title>
+  <style>
+    :root{--page:#fff;--text:#111827;--muted:#4b5563;--border:#e5e7eb;--soft:#f9fafb;--accent:#2563eb;--accentSoft:#eff6ff;}
+    *{box-sizing:border-box}
+    body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;line-height:1.65;background:var(--page);color:var(--text);padding:22px 14px;}
+    .wrap{max-width:980px;margin:0 auto}
+    header,section{border:1px solid var(--border);border-radius:12px;background:#fff;padding:14px 14px 12px 14px;margin-top:12px;}
+    header{background:var(--soft)}
+    h1{margin:0 0 6px 0;font-size:20px}
+    h2{margin:0 0 10px 0;font-size:16px}
+    h3{margin:14px 0 8px 0;font-size:14px}
+    p{margin:0 0 10px 0}
+    .muted{color:var(--muted)}
+    .meta{display:flex;flex-wrap:wrap;gap:8px 14px;margin-top:10px;padding-top:10px;border-top:1px dashed var(--border);color:var(--muted);font-size:13px;}
+    .meta b{color:var(--text);font-weight:900}
+    .note{margin-top:10px;padding:10px 12px;border:1px solid var(--border);border-left:4px solid var(--accent);border-radius:12px;background:var(--accentSoft);color:var(--muted);font-size:12.5px;}
+    .note b{color:var(--text)}
+    ul{margin:8px 0 0 18px;padding:0}
+    li{margin:4px 0}
+    table{width:100%;border-collapse:collapse;margin-top:10px;font-size:13px}
+    th,td{border:1px solid var(--border);padding:10px;vertical-align:top}
+    th{background:var(--soft);text-align:left;font-weight:900}
+    pre{margin:10px 0 0 0;padding:10px 12px;border:1px solid var(--border);border-radius:12px;background:#fff;overflow:auto;font-size:12.5px;line-height:1.55}
+    .kbd{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;font-size:12px;padding:.15rem .4rem;border:1px solid var(--border);border-bottom-width:2px;border-radius:8px;background:#fff;white-space:nowrap;}
+    @media print{body{padding:0}.wrap{max-width:100%;margin:0}@page{size:A4;margin:12mm}}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <h1>AI Çalışma Brifingi — Deniz Kılınç</h1>
+      <p class="muted"><b>Rol:</b> Backend Geliştirici + Veritabanı Yöneticisi</p>
+      <div class="meta">
+        <div><b>Proje:</b> Akıllı Şehir Çoklu Atık Türü Yönetimi ve Rota Optimizasyonu</div>
+        <div><b>Odak:</b> DB şeması + ingest + kalıcı kayıtlar</div>
+        <div><b>Yazdırma:</b> Ctrl+P</div>
+      </div>
+    </header>
+
+    <section>
+      <h2>1) Proje özeti (DB/Backend için kesin kurallar)</h2>
+      <ul>
+        <li><b>5 tür</b>: Cam, Plastik, Kağıt, İkinci El Eşya, Metal.</li>
+        <li><b>5 araç</b>: Her türün aracı ayrı, sadece kendi türünü toplar.</li>
+        <li><b>Garaj</b>: Rota garajdan başlar ve garaja döner (MVP).</li>
+        <li><b>Eşik</b>: doluluk ≥ %60 konteynerlar rotaya girer (MVP).</li>
+        <li><b>Kayıt</b>: Durak sonucu + toplama kaydı zorunlu: done/skipped, miktar(kg), zaman, araç/sürücü.</li>
+      </ul>
+      <div class="note"><b>Lider notu:</b> Mobil ekibin en çok takıldığı yer “endpoint isimleri” ve “alan adları”. İsimleri sabit tutmak kritik.</div>
+    </section>
+
+    <section>
+      <h2>2) Senin teslimlerin (Deniz) — net liste</h2>
+      <table>
+        <thead><tr><th>İş</th><th>Ne üretilecek?</th><th>Done (bitti sayma)</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><b>DB Şema v1</b></td>
+            <td>
+              Minimum tablolar:
+              <ul>
+                <li>containers (id, waste_type, lat, lng, status)</li>
+                <li>telemetry (container_id, fill_percent, lat, lng, timestamp)</li>
+                <li>vehicles (plate, waste_type, garage_lat, garage_lng)</li>
+                <li>drivers (plate_login, assigned_vehicle)</li>
+                <li>route_plans + route_stops (sequence)</li>
+                <li>collections (stop_id, amount_kg, done/skipped, reason, time, gps)</li>
+              </ul>
+            </td>
+            <td>Migration çalışır, local dev ortamda DB ayağa kalkar, temel sorgular hızlı.</td>
+          </tr>
+          <tr>
+            <td><b>Telemetri ingest</b></td>
+            <td>Simülasyondan gelen batch telemetriyi alır, doğrular, DB’ye yazar.</td>
+            <td>Hatalı veri 400; doğru veri DB’de görünüyor.</td>
+          </tr>
+          <tr>
+            <td><b>Latest state</b></td>
+            <td>Her konteyner için “son doluluk” görünümü (view/sorgu).</td>
+            <td>Rota modülü bu görünümden filtre yapabiliyor.</td>
+          </tr>
+          <tr>
+            <td><b>Rota & durak persist</b></td>
+            <td>Elif’in ürettiği stop sırasını DB’ye kaydetme + driver’a servis etme.</td>
+            <td>Mobil “aktif rota” çağırınca stop listesi geliyor.</td>
+          </tr>
+          <tr>
+            <td><b>Collection kayıtları</b></td>
+            <td>Mobilin gönderdiği “done/skipped + miktar + sebep” kaydını saklama.</td>
+            <td>DB’de toplanan kayıtlar raporlanabilir.</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section>
+      <h2>3) DB’de sık hata çıkan noktalar (kendini koru)</h2>
+      <ul>
+        <li><b>Idempotency</b>: Mobil aynı kaydı iki kez gönderebilir → duplicate olmasın.</li>
+        <li><b>Sequence</b>: route_stops sırası net olmalı, mobil onu gösterir.</li>
+        <li><b>Validasyon</b>: fill_percent 0–100 aralığı, lat/lng aralığı.</li>
+        <li><b>Latest state</b>: en büyük hata “yanlış telemetriyi son sanmak”. Timestamp/ingest zamanı net olmalı.</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>4) AI’ye kopyala-yapıştır “komut” (Deniz için)</h2>
+      <p class="muted">Bunu ChatGPT/Gemini’ye ver. AI senin backend+DB işlerini proje bağlamıyla birlikte anlasın.</p>
+      <pre>
+Sen benim proje asistanımsın. Bu mesajı “tek kaynak” kabul et ve projeyi buradan öğren.
+
+PROJE ADI:
+Akıllı Şehir Çoklu Atık Türü Yönetimi ve Rota Optimizasyonu (IoT Simülasyonu)
+
+SİSTEM ÖZETİ:
+Simülasyon konteyner doluluk/konum/tür telemetrisi üretir ve backend’e gönderir. Backend doluluk eşiğine göre konteynerları filtreler. Her atık türünün ayrı aracı vardır; rota planı garajdan başlar ve garaja döner. Sürücü Flutter mobilde sadece kendi aracının rotasını görür ve duraklarda “done/skipped” ile toplama kaydı girer.
+
+KESİN KURALLAR (DEĞİŞMEZ):
+1) Türler: Cam, Plastik, Kağıt, İkinci El Eşya, Metal.
+2) Her tür için ayrı araç + ayrı rota vardır (araç sadece kendi türünü toplar).
+3) Garaj: rota başlangıç ve bitiş noktasıdır (MVP).
+4) Eşik: doluluk ≥ %60 konteynerlar adaydır (MVP).
+5) Rota = durak sırası (sequence). Polyline zorunlu değil.
+6) Kayıt: done → miktar(kg) zorunlu, skipped → sebep zorunlu.
+
+BENİM ROLÜM:
+Deniz Kılınç — Backend Geliştirici + Veritabanı Yöneticisi.
+
+SENİN BİLMEN GEREKEN BAĞLANTILAR (ekip içi):
+- Elif: OpenAPI sözleşmesi + rota üretimi (sequence)
+- Şerif/Eren: Mobil; endpoint/alan isimlerine birebir bağımlılar
+- Mehmet: Simülasyon; telemetri payload alanlarını senden bekler
+
+BENİM SORUMLULUKLARIM (DB + BACKEND):
+A) DB Şema v1 (minimum ama sağlam):
+   - containers: (id, waste_type, lat, lng, status)
+   - telemetry: (id, container_id, fill_percent, lat, lng, source_timestamp, ingested_at)
+   - vehicles: (id, plate, waste_type, garage_lat, garage_lng)
+   - drivers: (id, plate_login, assigned_vehicle_id)
+   - route_plans: (id, vehicle_id, waste_type, created_at, status)
+   - route_stops: (id, route_plan_id, container_id, sequence_no, status)
+   - collections: (id, route_stop_id, result(done/skipped), amount_kg, skip_reason, collected_at, gps_lat, gps_lng, driver_id, vehicle_id)
+B) Telemetry ingest (batch):
+   - Validasyon: fill_percent 0..100, lat/lng aralığı, waste_type geçerli mi?
+   - Hatalı payload: 400 + anlaşılır mesaj
+C) Latest state (çok kritik):
+   - Her konteyner için en güncel doluluk (rota buradan filtreleyecek)
+   - Gecikmeli telemetri geldiğinde “son durum” bozulmamalı (timestamp mantığı net olmalı)
+D) Collections ve idempotency:
+   - Mobil aynı kaydı 2 kez yollayabilir → duplicate önlenecek
+   - En azından (route_stop_id + collected_at + driver_id) gibi benzersiz kural veya idempotency key
+
+AI’DEN İSTEDİĞİM (NET ÇIKTI):
+1) Postgres şema önerisi:
+   - Tablolar, alan tipleri, foreign key’ler
+   - İndeks önerileri (özellikle latest state ve route_stops için)
+2) Telemetry ingest API:
+   - Request batch JSON örneği
+   - Response örneği (kabul edilen/edilmeyen kayıtlar)
+   - Validasyon kuralları listesi
+3) Latest state tasarımı:
+   - En sağlam yöntem (view / materialized view / query)
+   - “source_timestamp” vs “ingested_at” hangisi kullanılmalı, neden?
+4) Collection idempotency:
+   - En basit uygulanabilir strateji (DB unique + client key)
+   - Duplicate tespit edilince API ne döndürmeli?
+5) Minimum endpoint listesi (mobil için):
+   - auth/login, me
+   - routes/active
+   - stops/{id}/status
+   - collections (create)
+
+ÇIKTI FORMATIN:
+- Her madde için “Öneri” + “Neden” + “Örnek JSON/SQL”
+- En sonda: “Bu hafta yapılacak 8 küçük task” listesi yaz (parçalı, PR’a uygun)
+      </pre>
+    </section>
+  </div>
+</body>
+</html>
+

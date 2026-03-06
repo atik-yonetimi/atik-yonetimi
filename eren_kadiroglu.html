@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>AI Brifing — Eren Kadiroğlu (Flutter & Tester)</title>
+  <style>
+    :root{--page:#fff;--text:#111827;--muted:#4b5563;--border:#e5e7eb;--soft:#f9fafb;--accent:#2563eb;--accentSoft:#eff6ff;}
+    *{box-sizing:border-box}
+    body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;line-height:1.65;background:var(--page);color:var(--text);padding:22px 14px;}
+    .wrap{max-width:980px;margin:0 auto}
+    header,section{border:1px solid var(--border);border-radius:12px;background:#fff;padding:14px 14px 12px 14px;margin-top:12px;}
+    header{background:var(--soft)}
+    h1{margin:0 0 6px 0;font-size:20px}
+    h2{margin:0 0 10px 0;font-size:16px}
+    h3{margin:14px 0 8px 0;font-size:14px}
+    p{margin:0 0 10px 0}
+    .muted{color:var(--muted)}
+    .meta{display:flex;flex-wrap:wrap;gap:8px 14px;margin-top:10px;padding-top:10px;border-top:1px dashed var(--border);color:var(--muted);font-size:13px;}
+    .meta b{color:var(--text);font-weight:900}
+    .note{margin-top:10px;padding:10px 12px;border:1px solid var(--border);border-left:4px solid var(--accent);border-radius:12px;background:var(--accentSoft);color:var(--muted);font-size:12.5px;}
+    .note b{color:var(--text)}
+    ul{margin:8px 0 0 18px;padding:0}
+    li{margin:4px 0}
+    table{width:100%;border-collapse:collapse;margin-top:10px;font-size:13px}
+    th,td{border:1px solid var(--border);padding:10px;vertical-align:top}
+    th{background:var(--soft);text-align:left;font-weight:900}
+    pre{margin:10px 0 0 0;padding:10px 12px;border:1px solid var(--border);border-radius:12px;background:#fff;overflow:auto;font-size:12.5px;line-height:1.55}
+    .kbd{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;font-size:12px;padding:.15rem .4rem;border:1px solid var(--border);border-bottom-width:2px;border-radius:8px;background:#fff;white-space:nowrap;}
+    @media print{body{padding:0}.wrap{max-width:100%;margin:0}@page{size:A4;margin:12mm}}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <h1>AI Çalışma Brifingi — Eren Kadiroğlu</h1>
+      <p class="muted"><b>Rol:</b> Flutter Mobil Geliştirici + Tester</p>
+      <div class="meta">
+        <div><b>Proje:</b> Akıllı Şehir Çoklu Atık Türü Yönetimi ve Rota Optimizasyonu</div>
+        <div><b>Odak:</b> Data layer + offline queue + test</div>
+        <div><b>Yazdırma:</b> Ctrl+P</div>
+      </div>
+    </header>
+
+    <section>
+      <h2>1) Proje kuralları (offline/test tasarımını etkiler)</h2>
+      <ul>
+        <li>5 tür: Cam, Plastik, Kağıt, İkinci El Eşya, Metal.</li>
+        <li>Sürücü sadece kendi aracının rotasını görür.</li>
+        <li>Durak: pending/arrived/done/skipped.</li>
+        <li>Done = collection kaydı var. Skipped = sebep zorunlu.</li>
+        <li>Miktar birimi: MVP’de kg.</li>
+      </ul>
+      <div class="note"><b>Lider notu:</b> Offline kuyruk demo günü hayat kurtarır. İnternet gidince iş durmamalı.</div>
+    </section>
+
+    <section>
+      <h2>2) Senin teslimlerin (Eren) — veri katmanı + test</h2>
+      <table>
+        <thead><tr><th>İş</th><th>Ne üretilecek?</th><th>Done</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><b>API Client</b></td>
+            <td>Auth, routes/active, stops/status, collections çağrıları (hata yönetimi ile).</td>
+            <td>Hata durumlarında kullanıcıya anlaşılır mesaj dönebiliyor.</td>
+          </tr>
+          <tr>
+            <td><b>Local cache</b></td>
+            <td>Aktif rota + stop listesi lokal saklama (uygulama kapanıp açılınca bozulmasın).</td>
+            <td>Offline iken rota ekranda görünüyor.</td>
+          </tr>
+          <tr>
+            <td><b>Offline queue</b></td>
+            <td>Collection kayıtlarını kuyrukta tutup online olunca sırayla gönderme.</td>
+            <td>Aynı kayıt iki kez gitmiyor; başarısız kayıt tekrar deneniyor.</td>
+          </tr>
+          <tr>
+            <td><b>Test checklist</b></td>
+            <td>Demo öncesi uçtan uca kontrol listesi + bug rapor formatı.</td>
+            <td>Demo günü sürpriz azalıyor; bug raporları tekrar üretilebilir.</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section>
+      <h2>3) Bug raporu formatı (herkesin anlayacağı şekilde)</h2>
+      <table>
+        <thead><tr><th>Alan</th><th>Ne yaz?</th></tr></thead>
+        <tbody>
+          <tr><td><b>Özet</b></td><td>1 cümle: “Nerede + ne oldu?”</td></tr>
+          <tr><td><b>Adımlar</b></td><td>1) … 2) … 3) …</td></tr>
+          <tr><td><b>Beklenen</b></td><td>Ne olmalıydı?</td></tr>
+          <tr><td><b>Gerçekleşen</b></td><td>Ne oldu?</td></tr>
+          <tr><td><b>Kanıt</b></td><td>Ekran görüntüsü / log / video (varsa)</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section>
+      <h2>4) AI’ye kopyala-yapıştır “komut” (Eren için)</h2>
+      <pre>
+Sen benim Flutter (data layer + offline + test) asistanımsın. Bu mesajı “tek kaynak” kabul et ve projeyi buradan öğren.
+
+PROJE ADI:
+Akıllı Şehir Çoklu Atık Türü Yönetimi ve Rota Optimizasyonu
+
+SİSTEM ÖZETİ (data layer açısından):
+Backend “aktif rota” ve “duraklar” listesini döner. Mobil kullanıcı (sürücü) duraklarda done/skipped ile kayıt açar. Saha koşullarında internet kesilebilir; bu yüzden offline-first gerekir: rota cache’lenir, collection kayıtları kuyruklanır, internet gelince senkronlanır.
+
+KESİN KURALLAR:
+1) Türler: Cam, Plastik, Kağıt, İkinci El Eşya, Metal.
+2) Sürücü sadece kendi aracının aktif rotasını görür.
+3) Durak durumları: pending / arrived / done / skipped.
+4) Done = collection kaydı var (miktar kg zorunlu).
+5) Skipped = sebep zorunlu.
+6) Offline senaryosu “normal” kabul edilir (özellikle demo/pilot).
+
+BENİM ROLÜM:
+Eren Kadiroğlu — Flutter Mobil Geliştirici + Tester.
+
+BENİM SORUMLULUKLARIM:
+A) API client + error handling:
+   - auth/login, me, routes/active, stops/status, collections
+   - timeout, 401/403, 500 gibi hatalarda kullanıcıya net mesaj
+B) Local cache:
+   - aktif rota + stop listesi lokal DB’de saklanacak
+   - app kapanıp açılınca rota kaybolmayacak
+C) Offline queue:
+   - collection kayıtlarını “pending” olarak sakla
+   - online olunca sırayla gönder
+   - başarılı olunca “sent”; hata olunca “failed” + retry
+   - duplicate önleme (idempotency) düşün
+D) Test:
+   - demo öncesi uçtan uca checklist
+   - bug raporu tekrar üretilebilir formatta
+
+VERİ MODELİ (mobil local DB için minimum öneri):
+- cached_route: route_id, vehicle_plate, waste_type, version(optional), fetched_at
+- cached_stops: stop_id, route_id, sequence_no, container_id, lat, lng, status
+- outbox_collections: local_id, stop_id, result(done/skipped), amount_kg, skip_reason, collected_at, gps_lat, gps_lng, status(pending/sent/failed), attempts, last_error
+- idempotency_key: (örn. local_id veya stop_id+timestamp hash)
+
+AI’DEN İSTEDİĞİM (NET ÇIKTI):
+1) Flutter’da offline-first yaklaşım:
+   - hangi katmanlar? (repository, data source, cache, outbox)
+2) Queue state machine:
+   - pending → sending → sent
+   - pending/failed → retry
+   - maksimum deneme + backoff öner
+3) Duplicate önleme:
+   - client-side idempotency_key nasıl üretilir?
+   - aynı stop için 2 kayıt yanlışlıkla gitmesin
+4) Senkron stratejisi:
+   - network geri gelince tetikleme
+   - uygulama açılışında “outbox flush”
+5) Test planı:
+   - 10 maddelik demo checklist (login → rota → done/skipped → offline → senkron)
+   - 5 maddelik “en sık hata” listesi + nasıl yakalanır
+6) Kullanıcı metinleri:
+   - offline uyarısı, gönderim başarılı/başarısız, tekrar denenecek mesajları (kısa Türkçe)
+
+ÇIKTI FORMATIN:
+- Uygulanabilir olacak şekilde kısa ama detaylı yaz
+- Her başlık altında 5–10 madde yeter
+- En sonda: “Ben bugün ne yapmalıyım?” diye 6 maddelik görev listesi çıkar
+      </pre>
+    </section>
+  </div>
+</body>
+</html>
+
