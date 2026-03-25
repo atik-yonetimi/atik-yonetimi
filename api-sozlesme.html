@@ -1,0 +1,387 @@
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Backend API Sözleşmesi — Tek Kaynak (v1)</title>
+  <style>
+    :root{
+      --page:#ffffff;
+      --text:#111827;
+      --muted:#4b5563;
+      --border:#e5e7eb;
+      --soft:#f9fafb;
+      --accent:#2563eb;
+      --accentSoft:#eff6ff;
+      --ok:#16a34a;
+      --warn:#b45309;
+      --bad:#dc2626;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, "Noto Sans", "Liberation Sans", sans-serif;
+      line-height:1.65;
+      background: var(--page);
+      color: var(--text);
+      padding: 22px 14px;
+    }
+    .wrap{max-width:1100px; margin:0 auto}
+    header{
+      border:1px solid var(--border);
+      background: var(--soft);
+      border-radius:12px;
+      padding:16px 16px 12px 16px;
+    }
+    h1{margin:0 0 6px 0; font-size:20px}
+    h2{margin:0 0 10px 0; font-size:16px}
+    h3{margin:14px 0 8px 0; font-size:14px}
+    p{margin:0 0 10px 0}
+    .muted{color:var(--muted)}
+    .meta{
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px 14px;
+      margin-top:12px;
+      padding-top:12px;
+      border-top:1px dashed var(--border);
+      color:var(--muted);
+      font-size:13px;
+    }
+    .meta b{color:var(--text); font-weight:900}
+    section{
+      border:1px solid var(--border);
+      background:#fff;
+      border-radius:12px;
+      padding:14px 14px 12px 14px;
+      margin-top:12px;
+    }
+    ul{margin:8px 0 0 18px; padding:0}
+    li{margin:4px 0}
+    table{
+      width:100%;
+      border-collapse:collapse;
+      margin-top:10px;
+      font-size:13px;
+    }
+    th,td{
+      border:1px solid var(--border);
+      padding:10px 10px;
+      vertical-align:top;
+    }
+    th{
+      text-align:left;
+      background: var(--soft);
+      font-weight:900;
+    }
+    .note{
+      margin-top:10px;
+      padding:10px 12px;
+      border:1px solid var(--border);
+      border-left:4px solid var(--accent);
+      border-radius:12px;
+      background: var(--accentSoft);
+      color: var(--muted);
+      font-size:12.5px;
+    }
+    .note b{color:var(--text)}
+    .kbd{
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      font-size:12px;
+      padding:.15rem .4rem;
+      border:1px solid var(--border);
+      border-bottom-width:2px;
+      border-radius:8px;
+      background:#fff;
+      color:var(--text);
+      white-space:nowrap;
+    }
+    pre{
+      margin:10px 0 0 0;
+      padding:10px 12px;
+      border:1px solid var(--border);
+      border-radius:12px;
+      background:#fff;
+      overflow:auto;
+      font-size:12.5px;
+      line-height:1.55;
+    }
+    .pill{
+      display:inline-block;
+      padding:2px 10px;
+      border-radius:999px;
+      border:1px solid var(--border);
+      background: var(--soft);
+      font-size:12px;
+      margin:2px 6px 2px 0;
+      white-space:nowrap;
+    }
+    footer{
+      margin-top:14px;
+      color:var(--muted);
+      font-size:12px;
+      text-align:center;
+    }
+    @media print{
+      body{padding:0}
+      .wrap{max-width:100%; margin:0}
+      @page{size:A4; margin:12mm}
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <h1>Backend API Sözleşmesi — Tek Kaynak (v1)</h1>
+      <p class="muted">Bu doküman, <b>backend kodundan çıkarılmış</b> en güncel sözleşmedir. Mobil ve simülasyon bu sayfayı referans alır.</p>
+      <div class="meta">
+        <div><b>Proje:</b> Akıllı Şehir Çoklu Atık Türü Yönetimi ve Rota Optimizasyonu</div>
+        <div><b>Owner:</b> Mehmet Demir</div>
+        <div><b>Kaynak:</b> <span class="kbd">Backend-DB/waste-management</span></div>
+        <div><b>Sunucu:</b> varsayılan <span class="kbd">http://localhost:8080</span></div>
+        <div><b>Swagger:</b> <span class="kbd">/swagger-ui.html</span></div>
+      </div>
+    </header>
+
+    <section>
+      <h2>1) Genel kurallar</h2>
+      <ul>
+        <li><b>Content-Type</b>: <span class="kbd">application/json</span></li>
+        <li><b>Zaman</b>: tüm zamanlar UTC, ISO 8601 (ör. <span class="kbd">2026-03-25T10:00:00Z</span>)</li>
+        <li><b>Doluluk</b>: <span class="kbd">fillPercent</span> 0–100 aralığında</li>
+        <li><b>Konum</b>: <span class="kbd">lat/lng</span> WGS84; backend null gelirse hata riski vardır (lat/lng gönderin)</li>
+      </ul>
+      <div class="note"><b>Not:</b> Bu sözleşme backend kodundaki doğrulamalara göre çıkarılmıştır. Proje kuralı gerektiren ama kodda henüz zorunlu olmayan alanlar ayrıca not edildi.</div>
+    </section>
+
+    <section>
+      <h2>2) Yetkilendirme</h2>
+      <p><b>Login</b> ile token alınır, diğer bazı endpoint’lerde header gerekir:</p>
+      <pre>Authorization: Bearer &lt;token&gt;</pre>
+      <div class="note">
+        <b>Uygulama notu:</b> Mevcut kodda geçersiz token için 401/403 yerine 400 dönüyor.
+      </div>
+    </section>
+
+    <section>
+      <h2>3) Hata formatı</h2>
+      <p>Tüm hatalar tek formatta döner:</p>
+      <pre>{
+  "message": "Hata mesajı"
+}</pre>
+      <table>
+        <thead>
+          <tr>
+            <th>Durum Kodu</th>
+            <th>Anlam</th>
+            <th>Kaynak</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>400</td><td>Geçersiz istek / validation hatası / token hatası</td><td>IllegalArgumentException / Validation</td></tr>
+          <tr><td>404</td><td>Kayıt bulunamadı</td><td>NotFoundException</td></tr>
+          <tr><td>409</td><td>Durum çakışması</td><td>IllegalStateException</td></tr>
+          <tr><td>500</td><td>Beklenmeyen hata</td><td>Exception</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section>
+      <h2>4) Enum listeleri</h2>
+      <p><b>WasteType</b>:</p>
+      <div>
+        <span class="pill">CAM</span>
+        <span class="pill">PLASTIK</span>
+        <span class="pill">KAGIT</span>
+        <span class="pill">IKINCI_EL_ESYA</span>
+        <span class="pill">METAL</span>
+      </div>
+      <p><b>StopStatus</b>:</p>
+      <div>
+        <span class="pill">PENDING</span>
+        <span class="pill">ARRIVED</span>
+        <span class="pill">DONE</span>
+        <span class="pill">SKIPPED</span>
+      </div>
+      <p><b>RouteStatus</b>:</p>
+      <div>
+        <span class="pill">DRAFT</span>
+        <span class="pill">ACTIVE</span>
+        <span class="pill">COMPLETED</span>
+        <span class="pill">CANCELLED</span>
+      </div>
+      <p><b>TriggerMode</b>:</p>
+      <div>
+        <span class="pill">MANUAL</span>
+        <span class="pill">CRON</span>
+        <span class="pill">ADMIN</span>
+      </div>
+    </section>
+
+    <section>
+      <h2>5) Endpoint listesi</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Yöntem</th>
+            <th>Path</th>
+            <th>Auth</th>
+            <th>Amacı</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>POST</td><td>/auth/login</td><td>Yok</td><td>Plaka ile giriş, token al</td></tr>
+          <tr><td>GET</td><td>/me</td><td>Bearer</td><td>Me (sürücü + araç) bilgisi</td></tr>
+          <tr><td>POST</td><td>/telemetry/ingest</td><td>Yok</td><td>Telemetri batch ingest</td></tr>
+          <tr><td>POST</td><td>/routes/generate</td><td>Yok</td><td>Rota üret (tür bazlı)</td></tr>
+          <tr><td>GET</td><td>/routes/active</td><td>Bearer</td><td>Aktif rota getir</td></tr>
+          <tr><td>PATCH</td><td>/stops/{stopId}/status</td><td>Bearer</td><td>Durak durum güncelle</td></tr>
+          <tr><td>POST</td><td>/collections</td><td>Bearer</td><td>Toplama kaydı oluştur</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section>
+      <h2>6) Auth</h2>
+
+      <h3>POST /auth/login</h3>
+      <p><b>Request</b></p>
+      <pre>{
+  "plate": "34GLS001"
+}</pre>
+      <p><b>Response</b></p>
+      <pre>{
+  "accessToken": "token-1-2f3a9c4d",
+  "tokenType": "Bearer",
+  "driverId": 1,
+  "vehicleId": 1,
+  "plate": "34GLS001"
+}</pre>
+
+      <h3>GET /me</h3>
+      <p><b>Header</b>: Authorization: Bearer &lt;token&gt;</p>
+      <p><b>Response</b></p>
+      <pre>{
+  "driverId": 1,
+  "vehicleId": 1,
+  "plate": "34GLS001",
+  "wasteType": "CAM"
+}</pre>
+    </section>
+
+    <section>
+      <h2>7) Telemetry</h2>
+      <h3>POST /telemetry/ingest</h3>
+      <p><b>Request</b></p>
+      <pre>{
+  "items": [
+    {
+      "containerId": 1,
+      "fillPercent": 78.5,
+      "lat": 41.015,
+      "lng": 28.984,
+      "recordedAt": "2026-03-25T10:00:00Z"
+    }
+  ]
+}</pre>
+      <p><b>Validation</b></p>
+      <ul>
+        <li><span class="kbd">containerId</span>: zorunlu</li>
+        <li><span class="kbd">fillPercent</span>: 0–100 arası</li>
+        <li><span class="kbd">recordedAt</span>: zorunlu</li>
+        <li><span class="kbd">lat/lng</span>: kodda zorunlu değil ama <b>fiilen gerekli</b> (null olursa hata riski)</li>
+      </ul>
+      <p><b>Response</b></p>
+      <pre>{
+  "acceptedCount": 1
+}</pre>
+      <div class="note"><b>Not:</b> containerId backend’de yoksa 404 döner ve batch başarısız olur.</div>
+    </section>
+
+    <section>
+      <h2>8) Routes</h2>
+      <h3>POST /routes/generate</h3>
+      <p><b>Request</b></p>
+      <pre>{
+  "wasteType": "CAM",
+  "generationMode": "MANUAL"
+}</pre>
+      <p><b>Response</b></p>
+      <pre>{
+  "id": 1,
+  "vehicleId": 1,
+  "wasteType": "CAM",
+  "status": "ACTIVE",
+  "generatedAt": "2026-03-25T10:05:00Z",
+  "stops": [
+    {
+      "id": 10,
+      "sequenceNo": 1,
+      "status": "PENDING",
+      "container": {
+        "id": 1,
+        "wasteType": "CAM",
+        "lat": 41.015,
+        "lng": 28.984
+      }
+    }
+  ]
+}</pre>
+
+      <h3>GET /routes/active</h3>
+      <p><b>Header</b>: Authorization: Bearer &lt;token&gt;</p>
+      <p><b>Response</b> (RoutePlanResponse aynı formatta)</p>
+      <div class="note"><b>Not:</b> Aktif rota yoksa 400 döner (mesaj: "Aktif rota bulunamadi").</div>
+    </section>
+
+    <section>
+      <h2>9) Stops</h2>
+      <h3>PATCH /stops/{stopId}/status</h3>
+      <p><b>Header</b>: Authorization: Bearer &lt;token&gt;</p>
+      <p><b>Request</b></p>
+      <pre>{
+  "status": "ARRIVED",
+  "skipReason": null
+}</pre>
+      <p><b>Kurallar (koddan)</b></p>
+      <ul>
+        <li>PENDING → ARRIVED geçer</li>
+        <li>PENDING → DONE geçmez (DONE için önce collection gerekir)</li>
+        <li>PENDING → SKIPPED geçer</li>
+        <li>ARRIVED → DONE geçer (önce collection olmalı)</li>
+        <li>PENDING’e geri dönüş yok</li>
+      </ul>
+      <div class="note"><b>Proje kuralı:</b> SKIPPED için <b>skipReason zorunlu</b> (kodda zorunlu değil).</div>
+    </section>
+
+    <section>
+      <h2>10) Collections</h2>
+      <h3>POST /collections</h3>
+      <p><b>Header</b>: Authorization: Bearer &lt;token&gt;</p>
+      <p><b>Request</b></p>
+      <pre>{
+  "routeStopId": 10,
+  "collectedKg": 12.5,
+  "note": "Normal toplama"
+}</pre>
+      <p><b>Response</b></p>
+      <pre>{
+  "id": 1,
+  "routeStopId": 10,
+  "vehicleId": 1,
+  "driverId": 1,
+  "result": "DONE",
+  "collectedKg": 12.5,
+  "skipReason": null,
+  "collectedAt": "2026-03-25T10:12:00Z",
+  "note": "Normal toplama"
+}</pre>
+      <div class="note"><b>Not:</b> Mevcut kod yalnızca DONE kaydı oluşturuyor; SKIPPED kayıt akışı henüz eklenmedi.</div>
+    </section>
+
+    <footer>
+      Dosya: api-sozlesme.html • Backend kodundan çıkarılmıştır
+    </footer>
+  </div>
+</body>
+</html>
